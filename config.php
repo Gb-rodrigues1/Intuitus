@@ -13,7 +13,7 @@ if (empty(getenv('MYSQLHOST'))) {
     $host = 'mysql.railway.internal';
     $banco = 'railway';
     $usuario = 'root';
-    $senha = 'VmGWhSgrwp3YYUnECPKjL1etPTqRBzxP';
+    $senha = 'VmGNnSgrwpJYYUnECPkjLIetPTqRBzxP';
     $port = '3306';
 }
 
