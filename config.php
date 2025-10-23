@@ -3,7 +3,7 @@
 
 // Usar variáveis de ambiente do Railway com seus valores específicos
 $host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
-$port = getenv('MYSQLPORT') ?: '3306';
+$port = getenv('MYSQLPORT') ?: '8080';
 $banco = getenv('MYSQLDATABASE') ?: 'railway';
 $usuario = getenv('MYSQLUSER') ?: 'root';
 $senha = getenv('MYSQLPASSWORD') ?: 'VmGNnSgrwpJYYUnECPkjLIetPTqRBzxP';
@@ -14,7 +14,7 @@ if (empty(getenv('MYSQLHOST'))) {
     $banco = 'railway';
     $usuario = 'root';
     $senha = 'VmGNnSgrwpJYYUnECPkjLIetPTqRBzxP';
-    $port = '3306';
+    $port = '8080';
 }
 
 try {
