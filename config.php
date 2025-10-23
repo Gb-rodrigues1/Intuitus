@@ -6,7 +6,7 @@ $host = getenv('MYSQLHOST') ?: 'mysql.railway.internal';
 $port = getenv('MYSQLPORT') ?: '3306';
 $banco = getenv('MYSQLDATABASE') ?: 'railway';
 $usuario = getenv('MYSQLUSER') ?: 'root';
-$senha = getenv('MYSQLPASSWORD') ?: 'VmGWhSgrwp3YYUnECPKjL1etPTqRBzxP';
+$senha = getenv('MYSQLPASSWORD') ?: 'VmGNnSgrwpJYYUnECPkjLIetPTqRBzxP';
 
 // Valores de fallback baseados na sua imagem
 if (empty(getenv('MYSQLHOST'))) {
