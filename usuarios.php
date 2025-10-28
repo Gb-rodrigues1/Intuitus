@@ -244,8 +244,7 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 
 <body class="container2 mt-4">
-
-  <!-- Botão Menu Mobile -->
+<!-- Botão Menu Mobile -->
   <button class="mobile-menu-btn mobile-only" id="mobileMenuBtn">
       <i class="fa fa-bars"></i>
   </button>
@@ -254,36 +253,37 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
   <!-- Sidebar -->
-  <div class="sidebar">
-    <h4 class="text-center">Menu</h4>
-    <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
-    <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
-    <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
-    <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
-    
-    <!-- Menu do Usuário Corrigido -->
-    <div class="user-menu">
-      <div class="user-info" id="userMenuToggle">
-        <div class="user-avatar">
-          <?php echo $iniciais; ?>
-        </div>
-        <div class="user-details">
-          <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
-          <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
-        </div>
-        <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
-      </div>
+  <div class="sidebar" id="sidebar">
+      <h4 class="text-center">Menu</h4>
+      <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+      <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
+      <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
+      <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
       
-      <div class="user-dropdown" id="userDropdown">
-        <a href="sobre.php">
+      <!-- Menu do Usuário Corrigido -->
+      <div class="user-menu">
+          <div class="user-info" id="userMenuToggle">
+              <div class="user-avatar">
+                  <?php echo $iniciais; ?>
+              </div>
+              <div class="user-details">
+                  <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
+                  <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
+              </div>
+              <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
+          </div>
+          
+          <div class="user-dropdown" id="userDropdown">
+              <a href="sobre.php">
                   <i class="fa fa-info-circle"></i> Sobre Nós
               </a>
-        <a href="logout.php">
-          <i class="fa fa-sign-out-alt"></i> Sair
-        </a>
+              <a href="logout.php">
+                  <i class="fa fa-sign-out-alt"></i> Sair
+              </a>
+          </div>
       </div>
-    </div>
   </div>
+
 
     <div class="content">
         <?php if ($mensagem): ?>
@@ -453,64 +453,63 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <?php endif; ?>
         });
 
-        // Controle do menu mobile
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.querySelector('.sidebar');
-        const sidebarOverlay = document.getElementById('sidebarOverlay');
-        const body = document.body;
+        // Menu Mobile
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      const userMenuToggle = document.getElementById('userMenuToggle');
+      const userDropdown = document.getElementById('userDropdown');
+      const userMenuChevron = document.getElementById('userMenuChevron');
 
-        if (mobileMenuBtn && sidebar && sidebarOverlay) {
-            mobileMenuBtn.addEventListener('click', function() {
-                sidebar.classList.toggle('mobile-open');
-                sidebarOverlay.classList.toggle('active');
-                body.classList.toggle('menu-open');
-            });
+      // Toggle menu mobile
+      mobileMenuBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('mobile-open');
+        sidebarOverlay.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+      });
 
-            sidebarOverlay.addEventListener('click', function() {
-                sidebar.classList.remove('mobile-open');
-                sidebarOverlay.classList.remove('active');
-                body.classList.remove('menu-open');
-            });
+      // Fechar menu ao clicar no overlay
+      sidebarOverlay.addEventListener('click', function() {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      });
 
-            const sidebarLinks = document.querySelectorAll('.sidebar a');
-            sidebarLinks.forEach(link => {
-                link.addEventListener('click', () => {
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('mobile-open');
-                        sidebarOverlay.classList.remove('active');
-                        body.classList.remove('menu-open');
-                    }
-                });
-            });
-
-            window.addEventListener('resize', () => {
-                if (window.innerWidth > 768) {
-                    sidebar.classList.remove('mobile-open');
-                    sidebarOverlay.classList.remove('active');
-                    body.classList.remove('menu-open');
-                }
-            });
-        }
-
-        // Controle do menu do usuário
-        const userMenuToggle = document.getElementById('userMenuToggle');
-        const userDropdown = document.getElementById('userDropdown');
-        const userMenuChevron = document.getElementById('userMenuChevron');
-        
+      // Toggle menu do usuário
+      if (userMenuToggle && userDropdown && userMenuChevron) {
         userMenuToggle.addEventListener('click', function() {
-            userDropdown.classList.toggle('show');
-            userMenuChevron.classList.toggle('fa-chevron-up');
-            userMenuChevron.classList.toggle('fa-chevron-down');
+          userDropdown.classList.toggle('show');
+          userMenuChevron.classList.toggle('fa-chevron-up');
+          userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
         // Fechar menu ao clicar fora
         document.addEventListener('click', function(event) {
-            if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
-                userDropdown.classList.remove('show');
-                userMenuChevron.classList.add('fa-chevron-up');
-                userMenuChevron.classList.remove('fa-chevron-down');
-            }
+          if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
+            userDropdown.classList.remove('show');
+            userMenuChevron.classList.add('fa-chevron-up');
+            userMenuChevron.classList.remove('fa-chevron-down');
+          }
         });
+      }
+
+      // Fechar dropdowns ao redimensionar a janela
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          sidebar.classList.remove('mobile-open');
+          sidebarOverlay.classList.remove('active');
+          document.body.classList.remove('menu-open');
+          if (userDropdown) {
+            userDropdown.classList.remove('show');
+          }
+          if (userMenuChevron) {
+            userMenuChevron.classList.add('fa-chevron-up');
+            userMenuChevron.classList.remove('fa-chevron-down');
+          }
+        }
+      });
+    });
     </script>
 </body>
 </html>
