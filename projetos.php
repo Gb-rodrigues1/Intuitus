@@ -103,8 +103,9 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="stile.css">
+    <!-- Adicionar viewport para mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
-
 
 <body class="container2 mt-4">
 
@@ -116,80 +117,81 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar COM ID CORRETO -->
   <div class="sidebar" id="sidebar">
-      <h4 class="text-center">Menu</h4>
-      <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
-      <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
-      <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
-      <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
-      
-      <!-- Menu do Usuário Corrigido -->
-      <div class="user-menu">
-          <div class="user-info" id="userMenuToggle">
-              <div class="user-avatar">
-                  <?php echo $iniciais; ?>
-              </div>
-              <div class="user-details">
-                  <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
-                  <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
-              </div>
-              <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
-          </div>
-          
-          <div class="user-dropdown" id="userDropdown">
-              <a href="sobre.php">
-                  <i class="fa fa-info-circle"></i> Sobre Nós
-              </a>
-              <a href="logout.php">
-                  <i class="fa fa-sign-out-alt"></i> Sair
-              </a>
-          </div>
+    <h4 class="text-center">Menu</h4>
+    <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+    <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
+    <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
+    <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
+    
+    <!-- Menu do Usuário -->
+    <div class="user-menu">
+      <div class="user-info" id="userMenuToggle">
+        <div class="user-avatar">
+          <?php echo $iniciais; ?>
+        </div>
+        <div class="user-details">
+          <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
+          <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
+        </div>
+        <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
       </div>
+      
+      <div class="user-dropdown" id="userDropdown">
+        <a href="sobre.php">
+          <i class="fa fa-info-circle"></i> Sobre Nós
+        </a>
+        <a href="logout.php">
+          <i class="fa fa-sign-out-alt"></i> Sair
+        </a>
+      </div>
+    </div>
   </div>
 
-    <div class="container mt-4 content">
-        <h1>Meus Projetos</h1>
+  <!-- CONTEÚDO PRINCIPAL COM CLASSE CORRETA -->
+  <div class="content">
+    <h1>Meus Projetos</h1>
 
-        <form method="post" class="mb-4">
-            <input type="text" name="titulo" placeholder="Título do projeto" required class="list-group ">
-            <input name="descricao" placeholder="Descrição" class="list-group"></input>
-            <button class="btn btn-success">Criar Projeto</button>
-        </form>
+    <form method="post" class="mb-4">
+        <input type="text" name="titulo" placeholder="Título do projeto" required class="list-group ">
+        <input name="descricao" placeholder="Descrição" class="list-group"></input>
+        <button class="btn btn-success">Criar Projeto</button>
+    </form>
 
-        <h2>Projetos</h2>
-        <?php foreach ($projetos as $proj): ?>
-            <li class="list-group">
-                <div class="linha">
-                    <div>
-                        <?= htmlspecialchars($proj['titulo']) ?>
-                        <?php if ($proj['foi_compartilhado']): ?>
-                            <?php if ($proj['eh_criador']): ?>
-                                <span class="badge-criador">Dono</span>
-                            <?php else: ?>
-                                <span class="badge-participante">Participante</span>
-                            <?php endif; ?>
-                        <?php endif; ?>
-                    </div>
-                    <div class="acoes-tarefa">
-                        <a href="projeto_detalhes.php?id=<?= $proj['id'] ?>">
-                            <button class="btn btn-sm btn-primary" name="detalhes" value="1">Detalhes</button>
-                        </a>
+    <h2>Projetos</h2>
+    <?php foreach ($projetos as $proj): ?>
+        <li class="list-group">
+            <div class="linha">
+                <div>
+                    <?= htmlspecialchars($proj['titulo']) ?>
+                    <?php if ($proj['foi_compartilhado']): ?>
                         <?php if ($proj['eh_criador']): ?>
-                            <!-- Apenas o criador pode deletar o projeto -->
-                            <form method="post" style="margin:0;" onsubmit="return confirm('Deletar Projeto?');">
-                                <input type="hidden" name="remover_id" value="<?= $proj['id'] ?>">
-                                <button class="btn btn-sm btn-danger" name="remover" value="1">Remover</button>
-                            </form>
+                            <span class="badge-criador">Dono</span>
+                        <?php else: ?>
+                            <span class="badge-participante">Participante</span>
                         <?php endif; ?>
-                    </div>
+                    <?php endif; ?>
                 </div>
-            </li>
-        <?php endforeach; ?>
+                <div class="acoes-tarefa">
+                    <a href="projeto_detalhes.php?id=<?= $proj['id'] ?>">
+                        <button class="btn btn-sm btn-primary" name="detalhes" value="1">Detalhes</button>
+                    </a>
+                    <?php if ($proj['eh_criador']): ?>
+                        <!-- Apenas o criador pode deletar o projeto -->
+                        <form method="post" style="margin:0;" onsubmit="return confirm('Deletar Projeto?');">
+                            <input type="hidden" name="remover_id" value="<?= $proj['id'] ?>">
+                            <button class="btn btn-sm btn-danger" name="remover" value="1">Remover</button>
+                        </form>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </li>
+    <?php endforeach; ?>
+  </div>
 
-        <script>
-            
-    // Menu Mobile
+  <script>
+    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -246,7 +248,7 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         }
       });
     });
-        </script>
+  </script>
 </body>
 
 </html>
