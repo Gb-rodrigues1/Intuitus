@@ -241,10 +241,13 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="stile.css">
+    <!-- Adicionar viewport para mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="container2 mt-4">
-<!-- Botão Menu Mobile -->
+
+  <!-- Botão Menu Mobile -->
   <button class="mobile-menu-btn mobile-only" id="mobileMenuBtn">
       <i class="fa fa-bars"></i>
   </button>
@@ -252,208 +255,199 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar COM ID CORRETO -->
   <div class="sidebar" id="sidebar">
-      <h4 class="text-center">Menu</h4>
-      <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
-      <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
-      <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
-      <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
-      
-      <!-- Menu do Usuário Corrigido -->
-      <div class="user-menu">
-          <div class="user-info" id="userMenuToggle">
-              <div class="user-avatar">
-                  <?php echo $iniciais; ?>
-              </div>
-              <div class="user-details">
-                  <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
-                  <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
-              </div>
-              <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
-          </div>
-          
-          <div class="user-dropdown" id="userDropdown">
-              <a href="sobre.php">
-                  <i class="fa fa-info-circle"></i> Sobre Nós
-              </a>
-              <a href="logout.php">
-                  <i class="fa fa-sign-out-alt"></i> Sair
-              </a>
-          </div>
+    <h4 class="text-center">Menu</h4>
+    <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+    <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
+    <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
+    <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
+    
+    <!-- Menu do Usuário -->
+    <div class="user-menu">
+      <div class="user-info" id="userMenuToggle">
+        <div class="user-avatar">
+          <?php echo $iniciais; ?>
+        </div>
+        <div class="user-details">
+          <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
+          <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
+        </div>
+        <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
       </div>
+      
+      <div class="user-dropdown" id="userDropdown">
+        <a href="sobre.php">
+          <i class="fa fa-info-circle"></i> Sobre Nós
+        </a>
+        <a href="logout.php">
+          <i class="fa fa-sign-out-alt"></i> Sair
+        </a>
+      </div>
+    </div>
   </div>
 
+  <div class="content">
+    <?php if ($mensagem): ?>
+        <div class="alert alert-info"><?= htmlspecialchars($mensagem) ?></div>
+    <?php endif; ?>
 
-    <div class="content">
-        <?php if ($mensagem): ?>
-            <div class="alert alert-info"><?= htmlspecialchars($mensagem) ?></div>
-        <?php endif; ?>
-
-        <!-- Modal de Resultado do Convite -->
-        <div class="modal fade" id="modalConvite" tabindex="-1" aria-labelledby="modalConviteLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="modalConviteLabel">
-                            <?php echo $convite_tipo === 'sucesso' ? 'Convite Enviado' : 'Erro no Envio'; ?>
-                        </h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="d-flex align-items-center">
-                            <?php if ($convite_tipo === 'sucesso'): ?>
-                                <i class="fas fa-check-circle text-success me-3 fs-4"></i>
-                            <?php else: ?>
-                                <i class="fas fa-exclamation-circle text-danger me-3 fs-4"></i>
-                            <?php endif; ?>
-                            <span><?= htmlspecialchars($convite_mensagem) ?></span>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-<?= $convite_tipo === 'sucesso' ? 'success' : 'danger' ?>"
-                            data-bs-dismiss="modal">Fechar</button>
+    <!-- Modal de Resultado do Convite -->
+    <div class="modal fade" id="modalConvite" tabindex="-1" aria-labelledby="modalConviteLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalConviteLabel">
+                        <?php echo $convite_tipo === 'sucesso' ? 'Convite Enviado' : 'Erro no Envio'; ?>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center">
+                        <?php if ($convite_tipo === 'sucesso'): ?>
+                            <i class="fas fa-check-circle text-success me-3 fs-4"></i>
+                        <?php else: ?>
+                            <i class="fas fa-exclamation-circle text-danger me-3 fs-4"></i>
+                        <?php endif; ?>
+                        <span><?= htmlspecialchars($convite_mensagem) ?></span>
                     </div>
                 </div>
-            </div>
-        </div>
-
-        <!-- Convites Recebidos (Pendentes) -->
-        <?php if (count($convites_recebidos) > 0): ?>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Convites Recebidos</h3>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-<?= $convite_tipo === 'sucesso' ? 'success' : 'danger' ?>"
+                        data-bs-dismiss="modal">Fechar</button>
                 </div>
-                <div class="card-body">
-                    <?php foreach ($convites_recebidos as $convite): ?>
-                        <div class="list-group mb-2">
-                            <div class="linha">
-                                <div>
-                                    <strong><?= htmlspecialchars($convite['remetente_nome']) ?></strong>
-                                    (<?= htmlspecialchars($convite['remetente_email']) ?>)<br>
-                                    <small>Projeto: <?= htmlspecialchars($convite['projeto_titulo']) ?></small><br>
-                                    <small>Enviado em: <?= date('d/m/Y H:i', strtotime($convite['criado_em'])) ?></small>
-                                </div>
-                                <div class="acoes-tarefa">
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="convite_id" value="<?= $convite['id'] ?>">
-                                        <input type="hidden" name="acao_convite" value="aceitar">
-                                        <button type="submit" class="btn btn-success btn-sm">Aceitar</button>
-                                    </form>
-                                    <form method="POST" style="display:inline;">
-                                        <input type="hidden" name="convite_id" value="<?= $convite['id'] ?>">
-                                        <input type="hidden" name="acao_convite" value="recusar">
-                                        <button type="submit" class="btn btn-danger btn-sm">Recusar</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <!-- Convites Enviados (Pendentes) -->
-        <?php if (count($convites_enviados) > 0): ?>
-            <div class="card mb-4">
-                <div class="card-header">
-                    <h3>Convites Enviados (Pendentes)</h3>
-                </div>
-                <div class="card-body">
-                    <?php foreach ($convites_enviados as $convite): ?>
-                        <div class="list-group mb-2">
-                            <div class="linha">
-                                <div>
-                                    <strong><?= htmlspecialchars($convite['destinatario_nome']) ?></strong>
-                                    (<?= htmlspecialchars($convite['destinatario_email']) ?>)<br>
-                                    <small>Projeto: <?= htmlspecialchars($convite['projeto_titulo']) ?></small><br>
-                                    <small>Enviado em: <?= date('d/m/Y H:i', strtotime($convite['criado_em'])) ?></small>
-                                </div>
-                                <span class="badge bg-warning">Aguardando resposta</span>
-                            </div>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        <?php endif; ?>
-
-        <!-- Minhas Conexões -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h3>Minhas Conexões</h3>
-            </div>
-            <div class="card-body">
-                <?php if (count($conexoes) > 0): ?>
-                    <?php foreach ($conexoes as $c): ?>
-                        <li class="list-group">
-                            <div class="linha">
-                                <div>
-                                    <strong><?= htmlspecialchars($c['nome']) ?></strong>
-                                    (<?= htmlspecialchars($c['email']) ?>)<br>
-                                    <?php if (!empty($c['projetos_compartilhados'])): ?>
-                                        <small>Projetos compartilhados:
-                                            <?= htmlspecialchars($c['projetos_compartilhados']) ?></small><br>
-                                    <?php endif; ?>
-                                    <small>Conectado desde: <?= date('d/m/Y H:i', strtotime($c['data_conexao'])) ?></small>
-                                </div>
-                                <form method="post" style="margin:0;"
-                                    onsubmit="return confirm('Remover conexão? Isso também removerá o acesso aos projetos compartilhados.');">
-                                    <input type="hidden" name="remover_id" value="<?= $c['id'] ?>">
-                                    <button class="btn btn-sm btn-danger" name="remover" value="1">Remover</button>
-                                </form>
-                            </div>
-                        </li>
-                    <?php endforeach; ?>
-                <?php else: ?>
-                    <p>Você ainda não possui conexões.</p>
-                <?php endif; ?>
-            </div>
-        </div>
-
-        <!-- Enviar Convite para Projeto -->
-        <div class="card">
-            <div class="card-header">
-                <h3>Adicionar Conexão</h3>
-            </div>
-            <div class="card-body">
-                <form method="POST" action="enviar_convite.php" id="formConvite">
-                    <div class="mb-3">
-                        <label for="projeto" class="form-label">Selecione o projeto:</label>
-                        <select id="projeto" name="projeto_id" class="form-select" required>
-                            <option value="">-- Escolha um projeto --</option>
-                            <?php if (!empty($projetos)): ?>
-                                <?php foreach ($projetos as $proj): ?>
-                                    <option value="<?= $proj['id'] ?>"><?= htmlspecialchars($proj['titulo']) ?></option>
-                                <?php endforeach; ?>
-                            <?php else: ?>
-                                <option disabled>Você não tem projetos para compartilhar.</option>
-                            <?php endif; ?>
-                        </select>
-                    </div>
-                    <div class="mb-3">
-                        <label for="email_destinatario" class="form-label">Email do destinatário:</label>
-                        <input type="email" id="email_destinatario" name="email_destinatario" class="form-control"
-                            required placeholder="email@exemplo.com">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Enviar Convite</button>
-                </form>
             </div>
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Convites Recebidos (Pendentes) -->
+    <?php if (count($convites_recebidos) > 0): ?>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Convites Recebidos</h3>
+            </div>
+            <div class="card-body">
+                <?php foreach ($convites_recebidos as $convite): ?>
+                    <div class="list-group mb-2">
+                        <div class="linha">
+                            <div>
+                                <strong><?= htmlspecialchars($convite['remetente_nome']) ?></strong>
+                                (<?= htmlspecialchars($convite['remetente_email']) ?>)<br>
+                                <small>Projeto: <?= htmlspecialchars($convite['projeto_titulo']) ?></small><br>
+                                <small>Enviado em: <?= date('d/m/Y H:i', strtotime($convite['criado_em'])) ?></small>
+                            </div>
+                            <div class="acoes-tarefa">
+                                <form method="POST" style="display:inline;">
+                                    <input type="hidden" name="convite_id" value="<?= $convite['id'] ?>">
+                                    <input type="hidden" name="acao_convite" value="aceitar">
+                                    <button type="submit" class="btn btn-success btn-sm">Aceitar</button>
+                                </form>
+                                <form method="POST" style="display:inline;">
+                                    <input type="hidden" name="convite_id" value="<?= $convite['id'] ?>">
+                                    <input type="hidden" name="acao_convite" value="recusar">
+                                    <button type="submit" class="btn btn-danger btn-sm">Recusar</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
 
-    <!-- Script para mostrar o modal automaticamente -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            <?php if (!empty($convite_mensagem)): ?>
-                var modal = new bootstrap.Modal(document.getElementById('modalConvite'));
-                modal.show();
+    <!-- Convites Enviados (Pendentes) -->
+    <?php if (count($convites_enviados) > 0): ?>
+        <div class="card mb-4">
+            <div class="card-header">
+                <h3>Convites Enviados (Pendentes)</h3>
+            </div>
+            <div class="card-body">
+                <?php foreach ($convites_enviados as $convite): ?>
+                    <div class="list-group mb-2">
+                        <div class="linha">
+                            <div>
+                                <strong><?= htmlspecialchars($convite['destinatario_nome']) ?></strong>
+                                (<?= htmlspecialchars($convite['destinatario_email']) ?>)<br>
+                                <small>Projeto: <?= htmlspecialchars($convite['projeto_titulo']) ?></small><br>
+                                <small>Enviado em: <?= date('d/m/Y H:i', strtotime($convite['criado_em'])) ?></small>
+                            </div>
+                            <span class="badge bg-warning">Aguardando resposta</span>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+                </div>
+        </div>
+    <?php endif; ?>
+
+    <!-- Minhas Conexões -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <h3>Minhas Conexões</h3>
+        </div>
+        <div class="card-body">
+            <?php if (count($conexoes) > 0): ?>
+                <?php foreach ($conexoes as $c): ?>
+                    <li class="list-group">
+                        <div class="linha">
+                            <div>
+                                <strong><?= htmlspecialchars($c['nome']) ?></strong>
+                                (<?= htmlspecialchars($c['email']) ?>)<br>
+                                <?php if (!empty($c['projetos_compartilhados'])): ?>
+                                    <small>Projetos compartilhados:
+                                        <?= htmlspecialchars($c['projetos_compartilhados']) ?></small><br>
+                                <?php endif; ?>
+                                <small>Conectado desde: <?= date('d/m/Y H:i', strtotime($c['data_conexao'])) ?></small>
+                            </div>
+                            <form method="post" style="margin:0;"
+                                onsubmit="return confirm('Remover conexão? Isso também removerá o acesso aos projetos compartilhados.');">
+                                <input type="hidden" name="remover_id" value="<?= $c['id'] ?>">
+                                <button class="btn btn-sm btn-danger" name="remover" value="1">Remover</button>
+                            </form>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <p>Você ainda não possui conexões.</p>
             <?php endif; ?>
-        });
+        </div>
+    </div>
 
-        // Menu Mobile
+    <!-- Enviar Convite para Projeto -->
+    <div class="card">
+        <div class="card-header">
+            <h3>Adicionar Conexão</h3>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="enviar_convite.php" id="formConvite">
+                <div class="mb-3">
+                    <label for="projeto" class="form-label">Selecione o projeto:</label>
+                    <select id="projeto" name="projeto_id" class="form-select" required>
+                        <option value="">-- Escolha um projeto --</option>
+                        <?php if (!empty($projetos)): ?>
+                            <?php foreach ($projetos as $proj): ?>
+                                <option value="<?= $proj['id'] ?>"><?= htmlspecialchars($proj['titulo']) ?></option>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <option disabled>Você não tem projetos para compartilhar.</option>
+                        <?php endif; ?>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="email_destinatario" class="form-label">Email do destinatário:</label>
+                    <input type="email" id="email_destinatario" name="email_destinatario" class="form-control"
+                        required placeholder="email@exemplo.com">
+                </div>
+                <button type="submit" class="btn btn-primary">Enviar Convite</button>
+            </form>
+        </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -509,7 +503,12 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
           }
         }
       });
+      
+      <?php if (!empty($convite_mensagem)): ?>
+          var modal = new bootstrap.Modal(document.getElementById('modalConvite'));
+          modal.show();
+      <?php endif; ?>
     });
-    </script>
+  </script>
 </body>
 </html>
