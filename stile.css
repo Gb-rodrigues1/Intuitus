@@ -1,4 +1,4 @@
-/* style.css - Estilos do Sistema de Projetos - RESPONSIVO CORRIGIDO E ORGANIZADO */
+/* style.css - Estilos do Sistema de Projetos
 
 /* ===== RESET E CONFIGURAÇÕES GLOBAIS ===== */
 * {
@@ -1650,4 +1650,110 @@ body.menu-open {
 
 .bg-roxo {
     background-color: #9b59b6;
+}
+
+/* ===== CORREÇÕES PARA MENU DO USUÁRIO NO MOBILE ===== */
+
+@media (max-width: 768px) {
+    /* Ajustar altura do body para mobile */
+    body {
+        min-height: 100vh;
+        height: 100%;
+        position: relative;
+    }
+    
+    /* Garantir que o sidebar ocupe altura total */
+    .sidebar {
+        height: 100vh;
+        overflow-y: auto;
+        padding-bottom: 120px; /* Mais espaço para o menu do usuário */
+    }
+    
+    /* Ajustar posicionamento do menu do usuário no mobile */
+    .user-menu {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        width: 280px;
+        background-color: #343a40;
+        z-index: 1006; /* Maior z-index para ficar acima de outros elementos */
+        border-top: 1px solid #495057;
+    }
+    
+    /* Ajustar dropdown do usuário no mobile */
+    .user-dropdown {
+        position: fixed;
+        bottom: 70px;
+        left: 0;
+        width: 280px;
+        z-index: 1007;
+        background-color: #495057;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    /* Garantir que o conteúdo principal tenha padding inferior para não ser coberto */
+    .content {
+        padding-bottom: 80px;
+    }
+    
+    /* Ajustar botões de ação no mobile */
+    .acoes-tarefa {
+        position: relative;
+        z-index: 1000;
+    }
+    
+    /* Melhorar a visualização dos modais no mobile */
+    .modal-improved .modal-dialog {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+    
+    /* Ajustar grid de notas no mobile */
+    .notes-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+}
+
+/* Melhorias para telas muito pequenas */
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+    }
+    
+    .user-menu {
+        width: 100%;
+    }
+    
+    .user-dropdown {
+        width: 100%;
+    }
+    
+    /* Ajustar cards para mobile muito pequeno */
+    .card {
+        margin: 5px;
+    }
+    
+    .linha {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    
+    .acoes-tarefa {
+        justify-content: center;
+        margin-top: 10px;
+    }
+}
+
+/* Garantir que o overlay cubra tudo */
+.sidebar-overlay.active {
+    z-index: 1001;
+}
+
+/* Ajustes para garantir que o menu do usuário seja clicável */
+.user-info {
+    z-index: 1002;
+    position: relative;
 }
