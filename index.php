@@ -413,7 +413,57 @@ try {
           }
         }
       });
+    
+
+    // Ajustar a altura do sidebar no mobile para evitar scroll excessivo
+    function adjustSidebarHeight() {
+        const sidebar = document.getElementById('sidebar');
+        const userMenu = document.querySelector('.user-menu');
+        
+        if (window.innerWidth <= 768 && sidebar && userMenu) {
+            const viewportHeight = window.innerHeight;
+            const userMenuHeight = userMenu.offsetHeight;
+            const availableHeight = viewportHeight - userMenuHeight - 20; // 20px de margem
+            
+            sidebar.style.maxHeight = availableHeight + 'px';
+            sidebar.style.overflowY = 'auto';
+        } else if (sidebar) {
+            sidebar.style.maxHeight = '';
+            sidebar.style.overflowY = '';
+        }
+    }
+    
+    // Executar ao carregar e redimensionar
+    adjustSidebarHeight();
+    window.addEventListener('resize', adjustSidebarHeight);
+    
+    // Fechar o dropdown do usuário ao clicar em um link
+    const userDropdownLinks = document.querySelectorAll('.user-dropdown a');
+    userDropdownLinks.forEach(link => {
+        link.addEventListener('click', () => {
+            const userDropdown = document.getElementById('userDropdown');
+            const userMenuChevron = document.getElementById('userMenuChevron');
+            
+            if (userDropdown && userMenuChevron) {
+                userDropdown.classList.remove('show');
+                userMenuChevron.classList.add('fa-chevron-up');
+                userMenuChevron.classList.remove('fa-chevron-down');
+            }
+            
+            // Fechar o sidebar no mobile
+            if (window.innerWidth <= 768) {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                
+                if (sidebar && sidebarOverlay) {
+                    sidebar.classList.remove('mobile-open');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.classList.remove('menu-open');
+                }
+            }
+        });
     });
+});
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
