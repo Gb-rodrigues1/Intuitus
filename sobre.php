@@ -36,6 +36,8 @@ if ($usuario && isset($usuario['nome'])) {
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="stile.css">
+    <!-- Adicionar viewport para mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body class="container2 mt-4">
@@ -48,8 +50,8 @@ if ($usuario && isset($usuario['nome'])) {
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar -->
-  <div class="sidebar">
+  <!-- Sidebar COM ID CORRETO -->
+  <div class="sidebar" id="sidebar">
     <h4 class="text-center">Menu</h4>
     <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
     <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
@@ -213,63 +215,62 @@ if ($usuario && isset($usuario['nome'])) {
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
-    // Controle do menu mobile
-    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-    const sidebar = document.querySelector('.sidebar');
-    const sidebarOverlay = document.getElementById('sidebarOverlay');
-    const body = document.body;
+    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const sidebar = document.getElementById('sidebar');
+      const sidebarOverlay = document.getElementById('sidebarOverlay');
+      const userMenuToggle = document.getElementById('userMenuToggle');
+      const userDropdown = document.getElementById('userDropdown');
+      const userMenuChevron = document.getElementById('userMenuChevron');
 
-    if (mobileMenuBtn && sidebar && sidebarOverlay) {
-        mobileMenuBtn.addEventListener('click', function() {
-            sidebar.classList.toggle('mobile-open');
-            sidebarOverlay.classList.toggle('active');
-            body.classList.toggle('menu-open');
+      // Toggle menu mobile
+      mobileMenuBtn.addEventListener('click', function() {
+        sidebar.classList.toggle('mobile-open');
+        sidebarOverlay.classList.toggle('active');
+        document.body.classList.toggle('menu-open');
+      });
+
+      // Fechar menu ao clicar no overlay
+      sidebarOverlay.addEventListener('click', function() {
+        sidebar.classList.remove('mobile-open');
+        sidebarOverlay.classList.remove('active');
+        document.body.classList.remove('menu-open');
+      });
+
+      // Toggle menu do usuário
+      if (userMenuToggle && userDropdown && userMenuChevron) {
+        userMenuToggle.addEventListener('click', function() {
+          userDropdown.classList.toggle('show');
+          userMenuChevron.classList.toggle('fa-chevron-up');
+          userMenuChevron.classList.toggle('fa-chevron-down');
         });
-
-        sidebarOverlay.addEventListener('click', function() {
-            sidebar.classList.remove('mobile-open');
-            sidebarOverlay.classList.remove('active');
-            body.classList.remove('menu-open');
-        });
-
-        const sidebarLinks = document.querySelectorAll('.sidebar a');
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('mobile-open');
-                    sidebarOverlay.classList.remove('active');
-                    body.classList.remove('menu-open');
-                }
-            });
-        });
-
-        window.addEventListener('resize', () => {
-            if (window.innerWidth > 768) {
-                sidebar.classList.remove('mobile-open');
-                sidebarOverlay.classList.remove('active');
-                body.classList.remove('menu-open');
-            }
-        });
-    }
-
-    // Controle do menu do usuário
-    const userMenuToggle = document.getElementById('userMenuToggle');
-    const userDropdown = document.getElementById('userDropdown');
-    const userMenuChevron = document.getElementById('userMenuChevron');
-    
-    userMenuToggle.addEventListener('click', function() {
-        userDropdown.classList.toggle('show');
-        userMenuChevron.classList.toggle('fa-chevron-up');
-        userMenuChevron.classList.toggle('fa-chevron-down');
-    });
-    
-    // Fechar menu ao clicar fora
-    document.addEventListener('click', function(event) {
-        if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
+        
+        // Fechar menu ao clicar fora
+        document.addEventListener('click', function(event) {
+          if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
             userDropdown.classList.remove('show');
             userMenuChevron.classList.add('fa-chevron-up');
             userMenuChevron.classList.remove('fa-chevron-down');
+          }
+        });
+      }
+
+      // Fechar dropdowns ao redimensionar a janela
+      window.addEventListener('resize', function() {
+        if (window.innerWidth > 768) {
+          sidebar.classList.remove('mobile-open');
+          sidebarOverlay.classList.remove('active');
+          document.body.classList.remove('menu-open');
+          if (userDropdown) {
+            userDropdown.classList.remove('show');
+          }
+          if (userMenuChevron) {
+            userMenuChevron.classList.add('fa-chevron-up');
+            userMenuChevron.classList.remove('fa-chevron-down');
+          }
         }
+      });
     });
   </script>
 </body>
