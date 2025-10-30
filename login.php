@@ -53,7 +53,7 @@ if ($_POST) {
     <div class="login-container">
         <div class="login-box">
             <div class="cabecalho-login">
-                <div class="logo-login">Mudança de conteudo do site</div>
+                <div class="logo-login">Intuitus</div>
             </div>
             <h1 class="cabecalho-login">Acesso ao Sistema</h1>
 
