@@ -219,6 +219,8 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
     <!-- FontAwesome -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="stile.css">
+    <!-- Adicionar viewport para mobile -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         .comprovante-container {
             max-height: 300px;
@@ -236,11 +238,27 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
             max-height: 80vh;
             overflow-y: auto;
         }
+        
+        /* Ajustes específicos para mobile */
+        @media (max-width: 768px) {
+            .container-fluid .row.g-0 .col-md-6 {
+                padding: 1rem !important;
+            }
+            
+            .modal-improved .modal-dialog {
+                margin: 10px;
+            }
+            
+            .comprovante-imagem {
+                max-height: 200px;
+            }
+        }
     </style>
 </head>
 
 <body class="container2 mt-4">
-<!-- Botão Menu Mobile -->
+
+  <!-- Botão Menu Mobile -->
   <button class="mobile-menu-btn mobile-only" id="mobileMenuBtn">
       <i class="fa fa-bars"></i>
   </button>
@@ -248,7 +266,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar COM ID CORRETO -->
   <div class="sidebar" id="sidebar">
       <h4 class="text-center">Menu</h4>
       <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
@@ -256,7 +274,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
       <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
       <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
       
-      <!-- Menu do Usuário Corrigido -->
+      <!-- Menu do Usuário -->
       <div class="user-menu">
           <div class="user-info" id="userMenuToggle">
               <div class="user-avatar">
@@ -280,8 +298,9 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
       </div>
   </div>
 
-
-    <div class="container mt-4 content">
+  <!-- CONTEÚDO PRINCIPAL COM CLASSE CORRETA -->
+  <div class="content">
+    <div class="container mt-4">
         <h1>Projeto: <?= htmlspecialchars($projeto['titulo']) ?></h1>
         <div class="criador-projeto">
             <i class="fa fa-user"></i> Criado por: <?= htmlspecialchars($projeto['nome_criador']) ?>
@@ -691,13 +710,13 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
             <i class="fa fa-arrow-left me-1"></i> Voltar para Projetos
         </a>
     </div>
+  </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-    <script>
-        
-    // Menu Mobile
+  <script>
+    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -755,13 +774,13 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
       });
     });
 
-        // Configurar data mínima para o campo de prazo (hoje)
-        const prazoInput = document.getElementById('prazo_conclusao');
-        if (prazoInput) {
-            const today = new Date().toISOString().split('T')[0];
-            prazoInput.min = today;
-        }
-    </script>
+    // Configurar data mínima para o campo de prazo (hoje)
+    const prazoInput = document.getElementById('prazo_conclusao');
+    if (prazoInput) {
+        const today = new Date().toISOString().split('T')[0];
+        prazoInput.min = today;
+    }
+  </script>
 </body>
 
 </html>
