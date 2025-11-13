@@ -156,11 +156,11 @@ try {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Dashboard</title>
   <!-- Bootstrap 5 -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
   <!-- FontAwesome -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link href="assets/fontawsome/css/all.min.css" rel="stylesheet">
   <!-- Chart.js -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="assets/node_modules/chart.js/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="stile.css">
   
   
@@ -168,44 +168,43 @@ try {
 
 <body class="container2 mt-4">
 
-  <!-- Botão Menu Mobile -->
-  <button class="mobile-menu-btn mobile-only" id="mobileMenuBtn">
+ <button class="mobile-menu-btn mobile-only" id="mobileMenuBtn">
       <i class="fa fa-bars"></i>
   </button>
 
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar -->
+  <!-- Sidebar COM ID CORRETO -->
   <div class="sidebar" id="sidebar">
-      <h4 class="text-center">Menu</h4>
-      <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
-      <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
-      <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
-      <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
-      
-      <!-- Menu do Usuário Corrigido -->
-      <div class="user-menu">
-          <div class="user-info" id="userMenuToggle">
-              <div class="user-avatar">
-                  <?php echo $iniciais; ?>
-              </div>
-              <div class="user-details">
-                  <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
-                  <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
-              </div>
-              <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
-          </div>
-          
-          <div class="user-dropdown" id="userDropdown">
-              <a href="sobre.php">
-                  <i class="fa fa-info-circle"></i> Sobre Nós
-              </a>
-              <a href="logout.php">
-                  <i class="fa fa-sign-out-alt"></i> Sair
-              </a>
-          </div>
+    <h4 class="text-center">Menu</h4>
+    <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+    <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
+    <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
+    <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
+    
+    <!-- Menu do Usuário -->
+    <div class="user-menu">
+      <div class="user-info" id="userMenuToggle">
+        <div class="user-avatar">
+          <?php echo $iniciais; ?>
+        </div>
+        <div class="user-details">
+          <div class="user-name"><?php echo htmlspecialchars($usuario['nome'] ?? 'Usuário'); ?></div>
+          <div class="user-email"><?php echo htmlspecialchars($usuario['email'] ?? ''); ?></div>
+        </div>
+        <i class="fa fa-chevron-up text-muted" id="userMenuChevron"></i>
       </div>
+      
+      <div class="user-dropdown" id="userDropdown">
+        <a href="sobre.php">
+          <i class="fa fa-info-circle"></i> Sobre Nós
+        </a>
+        <a href="logout.php">
+          <i class="fa fa-sign-out-alt"></i> Sair
+        </a>
+      </div>
+    </div>
   </div>
 
   <div class="content">
@@ -357,7 +356,7 @@ try {
       }
     });
 
-    // Menu Mobile
+    // Menu Mobile - VERSÃO CORRIGIDA
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -382,7 +381,8 @@ try {
 
       // Toggle menu do usuário
       if (userMenuToggle && userDropdown && userMenuChevron) {
-        userMenuToggle.addEventListener('click', function() {
+        userMenuToggle.addEventListener('click', function(e) {
+          e.stopPropagation();
           userDropdown.classList.toggle('show');
           userMenuChevron.classList.toggle('fa-chevron-up');
           userMenuChevron.classList.toggle('fa-chevron-down');
@@ -413,60 +413,37 @@ try {
           }
         }
       });
-    
 
-    // Ajustar a altura do sidebar no mobile para evitar scroll excessivo
-    function adjustSidebarHeight() {
-        const sidebar = document.getElementById('sidebar');
-        const userMenu = document.querySelector('.user-menu');
-        
-        if (window.innerWidth <= 768 && sidebar && userMenu) {
-            const viewportHeight = window.innerHeight;
-            const userMenuHeight = userMenu.offsetHeight;
-            const availableHeight = viewportHeight - userMenuHeight - 20; // 20px de margem
-            
-            sidebar.style.maxHeight = availableHeight + 'px';
-            sidebar.style.overflowY = 'auto';
-        } else if (sidebar) {
-            sidebar.style.maxHeight = '';
-            sidebar.style.overflowY = '';
-        }
-    }
-    
-    // Executar ao carregar e redimensionar
-    adjustSidebarHeight();
-    window.addEventListener('resize', adjustSidebarHeight);
-    
-    // Fechar o dropdown do usuário ao clicar em um link
-    const userDropdownLinks = document.querySelectorAll('.user-dropdown a');
-    userDropdownLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            const userDropdown = document.getElementById('userDropdown');
-            const userMenuChevron = document.getElementById('userMenuChevron');
-            
-            if (userDropdown && userMenuChevron) {
-                userDropdown.classList.remove('show');
-                userMenuChevron.classList.add('fa-chevron-up');
-                userMenuChevron.classList.remove('fa-chevron-down');
-            }
-            
-            // Fechar o sidebar no mobile
-            if (window.innerWidth <= 768) {
-                const sidebar = document.getElementById('sidebar');
-                const sidebarOverlay = document.getElementById('sidebarOverlay');
-                
-                if (sidebar && sidebarOverlay) {
-                    sidebar.classList.remove('mobile-open');
-                    sidebarOverlay.classList.remove('active');
-                    document.body.classList.remove('menu-open');
-                }
-            }
-        });
+      // Fechar o dropdown do usuário ao clicar em um link
+      const userDropdownLinks = document.querySelectorAll('.user-dropdown a');
+      userDropdownLinks.forEach(link => {
+          link.addEventListener('click', () => {
+              const userDropdown = document.getElementById('userDropdown');
+              const userMenuChevron = document.getElementById('userMenuChevron');
+              
+              if (userDropdown && userMenuChevron) {
+                  userDropdown.classList.remove('show');
+                  userMenuChevron.classList.add('fa-chevron-up');
+                  userMenuChevron.classList.remove('fa-chevron-down');
+              }
+              
+              // Fechar o sidebar no mobile
+              if (window.innerWidth <= 768) {
+                  const sidebar = document.getElementById('sidebar');
+                  const sidebarOverlay = document.getElementById('sidebarOverlay');
+                  
+                  if (sidebar && sidebarOverlay) {
+                      sidebar.classList.remove('mobile-open');
+                      sidebarOverlay.classList.remove('active');
+                      document.body.classList.remove('menu-open');
+                  }
+              }
+          });
+      });
     });
-});
   </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 </body>
 
 </html>
