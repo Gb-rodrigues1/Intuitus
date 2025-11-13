@@ -33,8 +33,8 @@ if ($usuario && isset($usuario['nome'])) {
 <head>
     <meta charset="UTF-8">
     <title>Sobre Nós - Intuitus Manager</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/fontawsome/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="stile.css">
     <!-- Adicionar viewport para mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -94,12 +94,6 @@ if ($usuario && isset($usuario['nome'])) {
                       <div class="col-md-12">
                           <h1 class="prelude-logo">Preludium</h1>
                           <h2 class="tagline">Intuitus Manager</h2>
-                          <div class="decorative-dots">
-                              <div class="dot dot-blue"></div>
-                              <div class="dot dot-green"></div>
-                              <div class="dot dot-red"></div>
-                              <div class="dot dot-yellow"></div>
-                              <div class="dot dot-purple"></div>
                           </div>
                           <p class="intro-text">
                               Combinamos expertise técnica com visão educacional para desenvolver 
@@ -205,14 +199,13 @@ if ($usuario && isset($usuario['nome'])) {
                           </div>
                       </div>
                   </div>
-              </div>
           </div>
       </div>
     </div>
   </div>
 
   <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 
   <script>
     // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
