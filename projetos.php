@@ -99,9 +99,9 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     <meta charset="UTF-8">
     <title>Meus Projetos</title>
     <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="assets/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/fontawsome/css/all.min.css" rel="stylesheet">
     <link rel="stylesheet" href="stile.css">
     <!-- Adicionar viewport para mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -117,15 +117,15 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar COM ID CORRETO -->
-  <div class="sidebar" id="sidebar">
-    <h4 class="text-center">Menu</h4>
-    <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
-    <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
-    <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
-    <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
+  
+<div class="sidebar" id="sidebar">
+        <h4 class="text-center">Menu</h4>
+        <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
+        <a href="projetos.php"><i class="fa fa-folder"></i> Projetos</a>
+        <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
+        <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
     
-    <!-- Menu do Usuário -->
+    <!-- Menu do usuário -->
     <div class="user-menu">
       <div class="user-info" id="userMenuToggle">
         <div class="user-avatar">
