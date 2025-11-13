@@ -861,9 +861,10 @@ body.menu-open {
     color: #2c3e50;
     margin-bottom: 1rem;
     letter-spacing: -2px;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    background: linear-gradient(135deg, #2b6cb0 0%, #4299e1 50%, #bee3f8 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .tagline {
@@ -918,7 +919,7 @@ body.menu-open {
     left: 0;
     right: 0;
     height: 4px;
-    background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12, #9b59b6);
+    background: linear-gradient(90deg, #4299e1);
 }
 
 .team-member-card:hover {
@@ -945,28 +946,28 @@ body.menu-open {
 }
 
 .icon-documentacao {
-    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-    box-shadow: 0 8px 20px rgba(52, 152, 219, 0.3);
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
 }
 
 .icon-banco-dados {
-    background: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
-    box-shadow: 0 8px 20px rgba(46, 204, 113, 0.3);
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
 }
 
 .icon-fullstack {
-    background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
-    box-shadow: 0 8px 20px rgba(231, 76, 60, 0.3);
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
 }
 
 .icon-design {
-    background: linear-gradient(135deg, #f39c12 0%, #d35400 100%);
-    box-shadow: 0 8px 20px rgba(243, 156, 18, 0.3);
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
 }
 
 .icon-analise {
-    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
-    box-shadow: 0 8px 20px rgba(155, 89, 182, 0.3);
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
 }
 
 .team-member-name {
@@ -1007,7 +1008,7 @@ body.menu-open {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: linear-gradient(90deg, #3498db, #2ecc71, #e74c3c, #f39c12, #9b59b6);
+    background: linear-gradient(90deg,  #4299e1 50%, #2b6cb0 100%);
     border-radius: 2px;
 }
 
@@ -1044,46 +1045,6 @@ body.menu-open {
     color: #3498db;
     margin-top: 1rem;
     font-size: 1rem;
-}
-
-.color-accent {
-    background: linear-gradient(135deg, #3498db, #2ecc71, #e74c3c, #f39c12, #9b59b6);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    font-weight: 600;
-}
-
-.decorative-dots {
-    display: flex;
-    justify-content: center;
-    gap: 8px;
-    margin: 2rem 0;
-}
-
-.dot {
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-}
-
-.dot-blue {
-    background: #3498db;
-}
-
-.dot-green {
-    background: #2ecc71;
-}
-
-.dot-red {
-    background: #e74c3c;
-}
-
-.dot-yellow {
-    background: #f39c12;
-}
-
-.dot-purple {
-    background: #9b59b6;
 }
 
 @media (max-width: 768px) {
@@ -1652,108 +1613,74 @@ body.menu-open {
     background-color: #9b59b6;
 }
 
-/* ===== CORREÇÕES PARA MENU DO USUÁRIO NO MOBILE ===== */
+
+
+/* codigo a ser mudado */
+
+
+
+/* ===== CORREÇÃO DEFINITIVA - MENU DO USUÁRIO NO MOBILE ===== */
 
 @media (max-width: 768px) {
-    /* Ajustar altura do body para mobile */
-    body {
-        min-height: 100vh;
-        height: 100%;
-        position: relative;
-    }
-    
-    /* Garantir que o sidebar ocupe altura total */
+    /* REMOVER todo padding-bottom excessivo do sidebar */
     .sidebar {
+        padding-bottom: 20px; /* Apenas um pequeno espaçamento */
         height: 100vh;
         overflow-y: auto;
-        padding-bottom: 120px; /* Mais espaço para o menu do usuário */
+        display: flex;
+        flex-direction: column;
     }
     
-    /* Ajustar posicionamento do menu do usuário no mobile */
+    /* MENU DO USUÁRIO - manter no fluxo normal, mas no FINAL */
     .user-menu {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 280px;
+        position: relative; /* Voltar ao fluxo normal */
+        bottom: auto; /* Remover posicionamento fixo */
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: auto; /* Isso empurra para o final */
         background-color: #343a40;
-        z-index: 1006; /* Maior z-index para ficar acima de outros elementos */
+        z-index: 1002;
         border-top: 1px solid #495057;
     }
     
-    /* Ajustar dropdown do usuário no mobile */
+    /* DROPDOWN - ajustar posicionamento */
     .user-dropdown {
-        position: fixed;
-        bottom: 70px;
+        position: absolute;
+        bottom: 100%; /* Abre para cima */
         left: 0;
-        width: 280px;
-        z-index: 1007;
+        width: 100%;
+        z-index: 1003;
         background-color: #495057;
         max-height: 200px;
         overflow-y: auto;
     }
     
-    /* Garantir que o conteúdo principal tenha padding inferior para não ser coberto */
+    /* CONTEÚDO PRINCIPAL - ajustar espaçamento */
     .content {
-        padding-bottom: 80px;
+        padding-bottom: 20px; /* Espaçamento normal */
     }
     
-    /* Ajustar botões de ação no mobile */
-    .acoes-tarefa {
-        position: relative;
-        z-index: 1000;
+    /* GARANTIR que o sidebar ocupe a altura correta */
+    body.menu-open {
+        overflow: hidden;
+        height: 100vh;
     }
     
-    /* Melhorar a visualização dos modais no mobile */
-    .modal-improved .modal-dialog {
-        margin: 10px;
-        max-width: calc(100% - 20px);
-    }
-    
-    /* Ajustar grid de notas no mobile */
-    .notes-grid {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        margin-bottom: 20px;
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
     }
 }
 
-/* Melhorias para telas muito pequenas */
+/* Para telas muito pequenas, ajustes adicionais */
 @media (max-width: 480px) {
     .sidebar {
-        width: 100%;
+        padding-bottom: 15px;
     }
     
-    .user-menu {
-        width: 100%;
-    }
-    
-    .user-dropdown {
-        width: 100%;
-    }
-    
-    /* Ajustar cards para mobile muito pequeno */
-    .card {
-        margin: 5px;
-    }
-    
-    .linha {
-        flex-direction: column;
-        align-items: stretch;
-    }
-    
-    .acoes-tarefa {
-        justify-content: center;
-        margin-top: 10px;
+    .user-info {
+        padding: 10px 15px;
     }
 }
 
-/* Garantir que o overlay cubra tudo */
-.sidebar-overlay.active {
-    z-index: 1001;
-}
-
-/* Ajustes para garantir que o menu do usuário seja clicável */
-.user-info {
-    z-index: 1002;
-    position: relative;
-}
