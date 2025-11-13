@@ -1613,6 +1613,71 @@ body.menu-open {
     background-color: #9b59b6;
 }
 
+/* ===== CORREÇÃO DEFINITIVA - MENU DO USUÁRIO NO MOBILE ===== */
+
+@media (max-width: 768px) {
+    /* REMOVER todo padding-bottom excessivo do sidebar */
+    .sidebar {
+        padding-bottom: 20px; /* Apenas um pequeno espaçamento */
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    /* MENU DO USUÁRIO - manter no fluxo normal, mas no FINAL */
+    .user-menu {
+        position: relative; /* Voltar ao fluxo normal */
+        bottom: auto; /* Remover posicionamento fixo */
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: auto; /* Isso empurra para o final */
+        background-color: #343a40;
+        z-index: 1002;
+        border-top: 1px solid #495057;
+    }
+    
+    /* DROPDOWN - ajustar posicionamento */
+    .user-dropdown {
+        position: absolute;
+        bottom: 100%; /* Abre para cima */
+        left: 0;
+        width: 100%;
+        z-index: 1003;
+        background-color: #495057;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+    
+    /* CONTEÚDO PRINCIPAL - ajustar espaçamento */
+    .content {
+        padding-bottom: 20px; /* Espaçamento normal */
+    }
+    
+    /* GARANTIR que o sidebar ocupe a altura correta */
+    body.menu-open {
+        overflow: hidden;
+        height: 100vh;
+    }
+    
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Para telas muito pequenas, ajustes adicionais */
+@media (max-width: 480px) {
+    .sidebar {
+        padding-bottom: 15px;
+    }
+    
+    .user-info {
+        padding: 10px 15px;
+    }
+}
+
 /* ===== CORREÇÕES PARA SIDEBAR MOBILE E BOTÕES DE NAVEGAÇÃO ===== */
 
 @media (max-width: 768px) {
