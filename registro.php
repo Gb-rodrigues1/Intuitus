@@ -99,6 +99,9 @@ if ($_POST) {
                 <div class="form-group">
                     <label class="form-label">Senha:</label>
                     <input type="password" name="senha" class="form-input" placeholder="Digite sua senha" required>
+                    <div class="senha-info">
+                        A senha deve conter pelo menos 6 caracteres, 1 letra maiúscula e 1 caractere especial
+                    </div>
                 </div>
 
                 <!-- Input confirmar senha -->
