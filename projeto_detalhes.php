@@ -8,12 +8,12 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
-// Buscar informações do usuário para mostrar na sidebar
+// Busca informações do usuário para mostrar na sidebar
 $stmtUsuario = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$usuario_id]);
 $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
 
-// Gerar iniciais do usuário
+// Gera iniciais do usuário
 $iniciais = '';
 if ($usuario && isset($usuario['nome'])) {
     $nomes = explode(' ', $usuario['nome']);
@@ -25,7 +25,7 @@ if ($usuario && isset($usuario['nome'])) {
     $iniciais = 'U';
 }
 
-// Exibir mensagens de feedback
+// Exibe mensagens de feedback
 if (isset($_SESSION['mensagem'])) {
     $tipo = $_SESSION['tipo_mensagem'] ?? 'info';
     $mensagem = $_SESSION['mensagem'];
@@ -61,7 +61,7 @@ if (!$projeto_info) {
 // Verifica se o usuário é o criador do projeto
 $eh_criador = ($projeto_info['criador_id'] == $_SESSION['usuario_id']);
 
-// Buscar membros do projeto (usuários conectados que participam do projeto) INCLUINDO o próprio usuário
+// Busca membros do projeto (usuários conectados que participam do projeto) INCLUINDO o próprio usuário
 $stmtMembros = $pdo->prepare("SELECT u.id, u.nome, u.email 
                              FROM usuarios u 
                              JOIN usuarios_projetos up ON u.id = up.usuario_id 
@@ -69,7 +69,7 @@ $stmtMembros = $pdo->prepare("SELECT u.id, u.nome, u.email
 $stmtMembros->execute([$projeto_id]);
 $membros_projeto = $stmtMembros->fetchAll(PDO::FETCH_ASSOC);
 
-// Criar nova tarefa
+// Cria nova tarefa
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo'])) {
     $titulo = trim($_POST['titulo']);
     $descricao = trim($_POST['descricao']);
@@ -88,11 +88,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo'])) {
     }
 }
 
-// Upload de comprovante E marcar como concluída
+// Upload de comprovante E marca como concluída
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comprovante_tarefa_id'])) {
     $tarefa_id = intval($_POST['comprovante_tarefa_id']);
 
-    // Verificar se o arquivo foi enviado
+    // Verifica se o arquivo foi enviado
     if (isset($_FILES['comprovante_imagem']) && $_FILES['comprovante_imagem']['error'] === UPLOAD_ERR_OK) {
         $uploadDir = 'comprovantes/';
         if (!is_dir($uploadDir)) {
@@ -104,7 +104,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comprovante_tarefa_id
 
         // Mover arquivo para o diretório de comprovantes
         if (move_uploaded_file($_FILES['comprovante_imagem']['tmp_name'], $uploadFile)) {
-            // Atualizar banco de dados com o caminho do comprovante E marcar como concluída
+            // Atualiza banco de dados com o caminho do comprovante E marca como concluída
             $stmt = $pdo->prepare("UPDATE tarefas SET comprovante = ?, concluida = 1, concluida_por = ?, concluida_em = NOW() WHERE id = ?");
             $stmt->execute([$uploadFile, $_SESSION['usuario_id'], $tarefa_id]);
 
@@ -117,11 +117,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comprovante_tarefa_id
     exit;
 }
 
-// Remover comprovante e desmarcar tarefa
+// Remove comprovante e desmarcar tarefa
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover_comprovante']) && isset($_POST['tarefa_id'])) {
     $tarefa_id = intval($_POST['tarefa_id']);
 
-    // Verificar se o usuário é o criador do projeto OU o usuário que enviou o comprovante
+    // Verifica se o usuário é o criador do projeto OU o usuário que enviou o comprovante
     $stmt = $pdo->prepare("SELECT t.comprovante, t.concluida_por, p.criador_id 
                           FROM tarefas t 
                           JOIN projetos p ON t.projeto_id = p.id 
@@ -135,7 +135,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover_comprovante']
             ($tarefa_info['concluida_por'] == $_SESSION['usuario_id']);
 
         if ($pode_remover) {
-            // Buscar o caminho do comprovante para apagar o arquivo
+            // Busca o caminho do comprovante para apagar o arquivo
             if ($tarefa_info['comprovante']) {
                 // Remove o arquivo do servidor
                 if (file_exists($tarefa_info['comprovante'])) {
@@ -143,7 +143,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover_comprovante']
                 }
             }
 
-            // Atualizar o banco: remove comprovante e marca como não concluída
+            // Atualiza o banco: remove comprovante e marca como não concluída
             $stmt = $pdo->prepare("UPDATE tarefas SET comprovante = NULL, concluida = 0, concluida_por = NULL, concluida_em = NULL WHERE id = ?");
             $stmt->execute([$tarefa_id]);
 
@@ -163,7 +163,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover_comprovante']
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($_POST['remover_id']) && $eh_criador) {
     $rem_id = intval($_POST['remover_id']);
 
-    // Antes de remover, apagar o comprovante se existir
+    // Antes de remover, apaga o comprovante se existir
     $stmt = $pdo->prepare("SELECT comprovante FROM tarefas WHERE id = ?");
     $stmt->execute([$rem_id]);
     $tarefa = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -181,7 +181,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($
     exit;
 }
 
-// Listar tarefas pendentes com informações do usuário designado
+// Lista tarefas pendentes com informações do usuário designado
 $stmtPendentes = $pdo->prepare("SELECT t.*, u.nome as nome_designado 
                                FROM tarefas t 
                                LEFT JOIN usuarios u ON t.designado_para = u.id 
@@ -190,7 +190,7 @@ $stmtPendentes = $pdo->prepare("SELECT t.*, u.nome as nome_designado
 $stmtPendentes->execute([$projeto_id]);
 $tarefas_pendentes = $stmtPendentes->fetchAll(PDO::FETCH_ASSOC);
 
-// Listar tarefas concluídas com informações do usuário que concluiu e designado
+// Lista tarefas concluídas com informações do usuário que concluiu e designado
 $stmtConcluidas = $pdo->prepare("SELECT t.*, u.nome as nome_usuario, ud.nome as nome_designado 
                                 FROM tarefas t 
                                 LEFT JOIN usuarios u ON t.concluida_por = u.id 
@@ -221,39 +221,6 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
     <link rel="stylesheet" href="stile.css">
     <!-- Adicionar viewport para mobile -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        .comprovante-container {
-            max-height: 300px;
-            overflow: hidden;
-        }
-
-        .comprovante-imagem {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-        }
-
-        /* Para garantir que o modal fique bem ajustado */
-        .modal-improved .modal-body {
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-        
-        /* Ajustes específicos para mobile */
-        @media (max-width: 768px) {
-            .container-fluid .row.g-0 .col-md-6 {
-                padding: 1rem !important;
-            }
-            
-            .modal-improved .modal-dialog {
-                margin: 10px;
-            }
-            
-            .comprovante-imagem {
-                max-height: 200px;
-            }
-        }
-    </style>
 </head>
 
 <body class="container2 mt-4">
@@ -298,7 +265,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
       </div>
   </div>
 
-  <!-- CONTEÚDO PRINCIPAL COM CLASSE CORRETA -->
+  <!-- Conteúdo principal -->
   <div class="content">
     <div class="container mt-4">
         <h1>Projeto: <?= htmlspecialchars($projeto['titulo']) ?></h1>
@@ -307,7 +274,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
         </div>
         <p>Descrição do projeto: <?= htmlspecialchars($projeto['descricao']) ?></p>
         
-        <!-- Seção de Membros do Projeto - SEMPRE VISÍVEL -->
+        <!-- Seção de Membros do Projeto -->
         <div class="card mb-4">
             <div class="card-header">
                 <h5><i class="fa fa-users me-2"></i>Membros do Projeto</h5>
@@ -319,12 +286,12 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
                         $badge_class = 'bg-primary';
                         $icon = 'fa-user';
                         
-                        // Destacar o criador do projeto
+                        // Destaca o criador do projeto
                         if ($membro['id'] == $projeto['criador_id']) {
                             $badge_class = 'bg-success';
                             $icon = 'fa-crown';
                         }
-                        // Destacar o usuário atual
+                        // Destaca o usuário atual
                         elseif ($membro['id'] == $_SESSION['usuario_id']) {
                             $badge_class = 'bg-info';
                             $icon = 'fa-user-circle';
@@ -380,7 +347,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
                                 Detalhes
                             </button>
                             <?php if ($eh_criador): ?>
-                                <!-- Botão Remover só aparece para o criador -->
+                                <!-- Botão Remover (só aparece para o criador) -->
                                 <form method="post" style="margin:0;" onsubmit="return confirm('Deletar tarefa?');">
                                     <input type="hidden" name="remover_id" value="<?= $t['id'] ?>">
                                     <button class="btn btn-sm btn-danger" name="remover" value="1">Remover</button>
@@ -417,7 +384,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
                                 Detalhes
                             </button>
                             <?php if ($eh_criador): ?>
-                                <!-- Botão Remover só aparece para o criador -->
+                                <!-- Botão Remover (só aparece para o criador) -->
                                 <form method="post" style="margin:0;" onsubmit="return confirm('Deletar tarefa?');">
                                     <input type="hidden" name="remover_id" value="<?= $t['id'] ?>">
                                     <button class="btn btn-sm btn-danger" name="remover" value="1">Remover</button>
@@ -429,7 +396,6 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
             <?php endforeach; ?>
         <?php endif; ?>
 
-        <!-- Modais DEVEM ficar FORA das listas -->
         <?php foreach ($tarefas_pendentes as $t): ?>
             <!-- Modal para Detalhes da Tarefa Pendente -->
             <div class="modal fade modal-improved" id="modalDetalhes<?= $t['id'] ?>" tabindex="-1"
@@ -655,7 +621,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
         <?php endforeach; ?>
 
         <?php if ($eh_criador): ?>
-            <!-- Formulário de nova tarefa só aparece para o criador -->
+            <!-- Formulário de nova tarefa (só aparece para o criador) -->
             <div class="card mt-4">
                 <div class="card-header">
                     <h3><i class="fa fa-plus-circle me-2"></i>Nova Tarefa</h3>
@@ -716,7 +682,6 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
   <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 
   <script>
-    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -732,7 +697,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
         document.body.classList.toggle('menu-open');
       });
 
-      // Fechar menu ao clicar no overlay
+      // Fecha menu ao clicar no overlay
       sidebarOverlay.addEventListener('click', function() {
         sidebar.classList.remove('mobile-open');
         sidebarOverlay.classList.remove('active');
@@ -747,7 +712,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
           userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
-        // Fechar menu ao clicar fora
+        // Fecha menu ao clicar fora
         document.addEventListener('click', function(event) {
           if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
             userDropdown.classList.remove('show');
@@ -757,7 +722,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
         });
       }
 
-      // Fechar dropdowns ao redimensionar a janela
+      // Fecha dropdowns ao redimensionar a janela
       window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
           sidebar.classList.remove('mobile-open');
@@ -774,7 +739,7 @@ $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
       });
     });
 
-    // Configurar data mínima para o campo de prazo (hoje)
+    // Configura data mínima para o campo de prazo (hoje)
     const prazoInput = document.getElementById('prazo_conclusao');
     if (prazoInput) {
         const today = new Date().toISOString().split('T')[0];
