@@ -1,5 +1,5 @@
 <?php
-// registro.php - Página de cadastro de novos usuários
+// Página de cadastro de novos usuários
 require_once 'config.php';
 
 $erro = '';
@@ -80,6 +80,7 @@ if ($_POST) {
                 </div>
             <?php endif; ?>
 
+            <!-- Input nome -->
             <form method="POST">
                 <div class="form-group">
                     <label class="form-label">Nome Completo:</label>
@@ -87,28 +88,33 @@ if ($_POST) {
                         value="<?php echo isset($_POST['nome']) ? htmlspecialchars($_POST['nome']) : ''; ?>">
                 </div>
 
+                <!-- Input email -->
                 <div class="form-group">
                     <label class="form-label">Email:</label>
                     <input type="email" name="email" class="form-input" placeholder="Digite seu email" required
                         value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                 </div>
 
+                <!-- Input senha -->
                 <div class="form-group">
                     <label class="form-label">Senha:</label>
                     <input type="password" name="senha" class="form-input" placeholder="Digite sua senha" required>
                 </div>
 
+                <!-- Input confirmar senha -->
                 <div class="form-group">
                     <label class="form-label">Confirmar Senha:</label>
                     <input type="password" name="confirmar_senha" class="form-input" placeholder="Confirme sua senha"
                         required>
                 </div>
 
+                <!-- Botão de cadastro -->
                 <button type="submit" class="btn-login">
                     Cadastrar
                 </button>
             </form>
 
+            <!-- Link para login.php -->
             <div class="label-cadastro">
                 Já tem uma conta? <a href="login.php" class="texto-cadastro">Faça Login Aqui</a>
             </div>
