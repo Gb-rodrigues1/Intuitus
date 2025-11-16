@@ -9,12 +9,12 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
-// Buscar informações do usuário para mostrar na sidebar
+// Busca informações do usuário para mostrar na sidebar
 $stmtUsuario = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$usuario_id]);
 $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
 
-// Gerar iniciais do usuário
+// Gera iniciais do usuário
 $iniciais = '';
 if ($usuario && isset($usuario['nome'])) {
     $nomes = explode(' ', $usuario['nome']);
@@ -50,7 +50,7 @@ if ($usuario && isset($usuario['nome'])) {
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar COM ID CORRETO -->
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <h4 class="text-center">Menu</h4>
     <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
@@ -208,7 +208,6 @@ if ($usuario && isset($usuario['nome'])) {
   <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 
   <script>
-    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -224,7 +223,7 @@ if ($usuario && isset($usuario['nome'])) {
         document.body.classList.toggle('menu-open');
       });
 
-      // Fechar menu ao clicar no overlay
+      // Fecha menu ao clicar no overlay
       sidebarOverlay.addEventListener('click', function() {
         sidebar.classList.remove('mobile-open');
         sidebarOverlay.classList.remove('active');
@@ -239,7 +238,7 @@ if ($usuario && isset($usuario['nome'])) {
           userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
-        // Fechar menu ao clicar fora
+        // Fecha menu ao clicar fora
         document.addEventListener('click', function(event) {
           if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
             userDropdown.classList.remove('show');
@@ -249,7 +248,7 @@ if ($usuario && isset($usuario['nome'])) {
         });
       }
 
-      // Fechar dropdowns ao redimensionar a janela
+      // Fecha dropdowns ao redimensionar a janela
       window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
           sidebar.classList.remove('mobile-open');
