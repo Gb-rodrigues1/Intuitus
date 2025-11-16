@@ -1,7 +1,6 @@
 <?php
 
-// Requer config.php que já inicia sessão e cria $pdo
-require_once "config.php"; // conexão com o banco e session_start()
+require_once "config.php";
 
 // Verifica se usuário está logado
 if (!isset($_SESSION['usuario_id'])) {
@@ -11,12 +10,12 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
-// Buscar informações do usuário para mostrar na sidebar
+// Busca informações do usuário para mostrar na sidebar
 $stmtUsuario = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$usuario_id]);
 $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
 
-// Gerar iniciais do usuário
+// Gera iniciais do usuário
 $iniciais = '';
 if ($usuario && isset($usuario['nome'])) {
     $nomes = explode(' ', $usuario['nome']);
@@ -67,7 +66,7 @@ try {
   $stmtConexoes->execute([$usuario_id, $usuario_id, $usuario_id, $usuario_id]);
   $totalConexoes = $stmtConexoes->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
 
-  // Buscar projetos do usuário para o filtro
+  // Busca projetos do usuário para o filtro
   $stmtProjetosFiltro = $pdo->prepare("SELECT DISTINCT p.id, p.titulo 
                                       FROM projetos p 
                                       LEFT JOIN usuarios_projetos up ON p.id = up.projeto_id 
@@ -76,7 +75,7 @@ try {
   $stmtProjetosFiltro->execute([$usuario_id, $usuario_id]);
   $projetos = $stmtProjetosFiltro->fetchAll(PDO::FETCH_ASSOC);
 
-  // Verificar se há um filtro de projeto selecionado
+  // Verifica se há um filtro de projeto selecionado
   $projeto_filtro = $_GET['projeto'] ?? 'todos';
   
   // Dados para o gráfico de tarefas
@@ -103,7 +102,7 @@ try {
     // Tarefas de um projeto específico
     $projeto_id = intval($projeto_filtro);
     
-    // Verificar se o usuário tem acesso a este projeto
+    // Verifica se o usuário tem acesso a este projeto
     $stmtVerificaAcesso = $pdo->prepare("SELECT COUNT(*) as acesso 
                                         FROM projetos p 
                                         LEFT JOIN usuarios_projetos up ON p.id = up.projeto_id 
@@ -124,7 +123,7 @@ try {
       $stmtTarefasPendentes->execute([$projeto_id]);
       $tarefasPendentes = $stmtTarefasPendentes->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
       
-      // Buscar nome do projeto para o título
+      // Busca nome do projeto para o título
       $stmtProjetoNome = $pdo->prepare("SELECT titulo FROM projetos WHERE id = ?");
       $stmtProjetoNome->execute([$projeto_id]);
       $projeto_nome = $stmtProjetoNome->fetch(PDO::FETCH_ASSOC)['titulo'] ?? 'Projeto';
@@ -175,7 +174,7 @@ try {
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar COM ID CORRETO -->
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
     <h4 class="text-center">Menu</h4>
     <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
@@ -210,7 +209,7 @@ try {
   <div class="content">
     <h1 class="mb-4">Dashboard</h1>
 
-    <!-- Filtro de Projeto - Layout melhorado -->
+    <!-- Filtro de Projeto -->
     <div class="card mb-4">
   <div class="card-body py-3">
     <form method="GET" class="row g-3 align-items-end">
@@ -231,7 +230,7 @@ try {
   </div>
 </div>
 
-    <!-- Cards de Estatísticas - Ícones removidos e conteúdo centralizado -->
+    <!-- Cards de Estatísticas -->
     <div class="row g-3 mb-4">
   <div class="col-12">
     <div class="row g-3 justify-content-center">
@@ -257,7 +256,7 @@ try {
   </div>
 </div>
 
-    <!-- Gráfico de Tarefas Concluídas vs Pendentes - Layout melhor equilibrado -->
+    <!-- Gráfico de Tarefas Concluídas vs Pendentes -->
     <div class="row g-4">
       <div class="col-lg-8">
         <div class="card h-100">
@@ -356,7 +355,7 @@ try {
       }
     });
 
-    // Menu Mobile - VERSÃO CORRIGIDA
+    // Menu Mobile
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -372,7 +371,7 @@ try {
         document.body.classList.toggle('menu-open');
       });
 
-      // Fechar menu ao clicar no overlay
+      // Fecha menu ao clicar no overlay
       sidebarOverlay.addEventListener('click', function() {
         sidebar.classList.remove('mobile-open');
         sidebarOverlay.classList.remove('active');
@@ -388,7 +387,7 @@ try {
           userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
-        // Fechar menu ao clicar fora
+        // Fecha menu ao clicar fora
         document.addEventListener('click', function(event) {
           if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
             userDropdown.classList.remove('show');
@@ -398,7 +397,7 @@ try {
         });
       }
 
-      // Fechar dropdowns ao redimensionar a janela
+      // Fecha dropdowns ao redimensionar a janela
       window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
           sidebar.classList.remove('mobile-open');
@@ -414,7 +413,7 @@ try {
         }
       });
 
-      // Fechar o dropdown do usuário ao clicar em um link
+      // Fecha o dropdown do usuário ao clicar em um link
       const userDropdownLinks = document.querySelectorAll('.user-dropdown a');
       userDropdownLinks.forEach(link => {
           link.addEventListener('click', () => {
@@ -427,7 +426,7 @@ try {
                   userMenuChevron.classList.remove('fa-chevron-down');
               }
               
-              // Fechar o sidebar no mobile
+              // Fecha o sidebar no mobile
               if (window.innerWidth <= 768) {
                   const sidebar = document.getElementById('sidebar');
                   const sidebarOverlay = document.getElementById('sidebarOverlay');
