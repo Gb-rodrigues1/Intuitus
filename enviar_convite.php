@@ -20,7 +20,7 @@ if (empty($emailDestinatario) || empty($projetoId)) {
     exit;
 }
 
-// Buscar ID do destinatário pelo e-mail
+// Busca ID do destinatário pelo e-mail
 $stmt = $pdo->prepare("SELECT id, nome FROM usuarios WHERE email = ?");
 $stmt->execute([$emailDestinatario]);
 $destinatario = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -42,7 +42,7 @@ if ($destinatarioId == $remetenteId) {
     exit;
 }
 
-// Verificar se o remetente é o criador do projeto
+// Verifica se o remetente é o criador do projeto
 $stmt = $pdo->prepare("SELECT titulo FROM projetos WHERE id = ? AND criador_id = ?");
 $stmt->execute([$projetoId, $remetenteId]);
 $projeto = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -56,7 +56,7 @@ if (!$projeto) {
 
 $projetoTitulo = $projeto['titulo'];
 
-// Verificar se já existe convite pendente
+// Verifica se já existe convite pendente
 $stmt = $pdo->prepare("SELECT id FROM convites_compartilhamento 
                        WHERE projeto_id = ? AND destinatario_id = ? AND status = 'pendente'");
 $stmt->execute([$projetoId, $destinatarioId]);
@@ -68,7 +68,7 @@ if ($stmt->rowCount() > 0) {
     exit;
 }
 
-// Verificar se já tem acesso via usuarios_projetos
+// Verifica se já tem acesso via usuarios_projetos
 $stmt = $pdo->prepare("SELECT 1 FROM usuarios_projetos WHERE projeto_id = ? AND usuario_id = ?");
 $stmt->execute([$projetoId, $destinatarioId]);
 
@@ -79,7 +79,7 @@ if ($stmt->rowCount() > 0) {
     exit;
 }
 
-// Inserir convite
+// Insere convite
 $stmt = $pdo->prepare("INSERT INTO convites_compartilhamento (projeto_id, remetente_id, destinatario_id)
                        VALUES (?, ?, ?)");
 $success = $stmt->execute([$projetoId, $remetenteId, $destinatarioId]);
