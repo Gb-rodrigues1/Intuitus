@@ -1,5 +1,5 @@
 <?php
-// login.php - Página de login do sistema
+// Página de login do sistema
 require_once 'config.php';
 
 $erro = '';
@@ -61,6 +61,7 @@ if ($_POST) {
                 <div class="alert alert-error"><?php echo $erro; ?></div>
             <?php endif; ?>
 
+            <!-- Input email -->
             <form method="POST">
                 <div class="form-group">
                     <label class="form-label">Email:</label>
@@ -68,15 +69,19 @@ if ($_POST) {
                         value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
                 </div>
 
+                <!-- Input senha -->
                 <div class="form-group">
                     <label class="form-label">Senha:</label>
                     <input type="password" name="senha" class="form-input" placeholder="Digite sua senha" required>
                 </div>
 
+                <!-- Botão de login -->
                 <button type="submit" class="btn-login">
                     Entrar
                 </button>
             </form>
+
+            <!-- Link para registro.php -->
             <div class="label-cadastro">
                 Não tem conta? <a href="registro.php" class="texto-cadastro">Cadastre-se aqui</a>
             </div>
