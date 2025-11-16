@@ -781,7 +781,7 @@ body.menu-open {
 }
 
 .comprovante-container {
-    max-height: 300px;
+    max-height: 1000px;
     overflow: hidden;
 }
 
@@ -807,7 +807,7 @@ body.menu-open {
     }
 
     .comprovante-imagem {
-        max-height: 200px;
+        max-height: 900px;
     }
 }
 
@@ -1525,7 +1525,7 @@ body.menu-open {
     }
 
     .comprovante-imagem {
-        max-height: 1000px;
+        max-height: 200px;
     }
 
     .sidebar a {
