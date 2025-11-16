@@ -1,5 +1,5 @@
 <?php
-// logout.php - Faz logout do usuário
+
 session_start();
 
 // Destroi todas as variáveis de sessão
