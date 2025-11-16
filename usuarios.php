@@ -9,12 +9,12 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
-// Buscar informações do usuário para mostrar na sidebar
+// Busca informações do usuário para mostrar na sidebar
 $stmtUsuario = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$usuario_id]);
 $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
 
-// Gerar iniciais do usuário
+// Gera iniciais do usuário
 $iniciais = '';
 if ($usuario && isset($usuario['nome'])) {
     $nomes = explode(' ', $usuario['nome']);
@@ -29,18 +29,18 @@ if ($usuario && isset($usuario['nome'])) {
 $id_usuario = $_SESSION['usuario_id'];
 $mensagem = "";
 
-// Verificar se há mensagem de convite para mostrar no modal
+// Verifica se há mensagem de convite para mostrar no modal
 $convite_mensagem = "";
 $convite_tipo = "";
 if (isset($_SESSION['convite_mensagem'])) {
     $convite_mensagem = $_SESSION['convite_mensagem'];
     $convite_tipo = $_SESSION['convite_tipo'];
-    // Limpar a mensagem da sessão após usar
+    // Limpa a mensagem da sessão após usar
     unset($_SESSION['convite_mensagem']);
     unset($_SESSION['convite_tipo']);
 }
 
-// Processar remoção de conexão
+// Processa remoção de conexão
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($_POST['remover_id'])) {
     $rem_id = intval($_POST['remover_id']);
 
@@ -54,13 +54,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($
     $stmt->execute([$id_usuario, $rem_id]);
     $projetos_compartilhados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-    // Remover o usuário dos projetos do outro usuário
+    // Remove o usuário dos projetos do outro usuário
     foreach ($projetos_compartilhados as $projeto) {
         $stmt = $pdo->prepare("DELETE FROM usuarios_projetos WHERE usuario_id = ? AND projeto_id = ?");
         $stmt->execute([$id_usuario, $projeto['projeto_id']]);
     }
 
-    // Também remover o usuário atual dos projetos do outro usuário (caso ele tenha sido adicionado)
+    // Também remove o usuário atual dos projetos do outro usuário (caso ele tenha sido adicionado)
     $stmt = $pdo->prepare("
         SELECT DISTINCT up.projeto_id 
         FROM usuarios_projetos up 
@@ -75,15 +75,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($
         $stmt->execute([$rem_id, $projeto['projeto_id']]);
     }
 
-    // Remover os convites/compartilhamentos entre os usuários
+    // Remove os convites/compartilhamentos entre os usuários
     $stmt = $pdo->prepare("DELETE FROM convites_compartilhamento WHERE (remetente_id = ? AND destinatario_id = ?) OR (remetente_id = ? AND destinatario_id = ?)");
     $stmt->execute([$id_usuario, $rem_id, $rem_id, $id_usuario]);
 
-    // Agora remover a conexão
+    // Agora remove a conexão
     $stmt = $pdo->prepare("DELETE FROM usuarios_conexoes WHERE id_usuario = ? AND id_conectado = ?");
     $stmt->execute([$_SESSION['usuario_id'], $rem_id]);
 
-    // Também remover a conexão inversa (se existir)
+    // Também remove a conexão inversa (se existir)
     $stmt = $pdo->prepare("DELETE FROM usuarios_conexoes WHERE id_usuario = ? AND id_conectado = ?");
     $stmt->execute([$rem_id, $_SESSION['usuario_id']]);
 
@@ -92,23 +92,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($
     exit;
 }
 
-// Processar resposta do convite (aceitar/recusar)
+// Processa resposta do convite (aceitar/recusar)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao_convite'])) {
     $convite_id = intval($_POST['convite_id']);
     $acao = $_POST['acao_convite'];
 
     if ($acao === 'aceitar') {
-        // Atualizar status do convite e data de aceitação
+        // Atualiza status do convite e data de aceitação
         $stmt = $pdo->prepare("UPDATE convites_compartilhamento SET status = 'aceito', aceito_em = NOW() WHERE id = ? AND destinatario_id = ?");
         $stmt->execute([$convite_id, $id_usuario]);
 
-        // Adicionar à lista de conexões
+        // Adiciona à lista de conexões
         $stmt = $pdo->prepare("SELECT remetente_id, projeto_id FROM convites_compartilhamento WHERE id = ?");
         $stmt->execute([$convite_id]);
         $convite = $stmt->fetch(PDO::FETCH_ASSOC);
 
         if ($convite) {
-            // Verificar se já não existe a conexão (em ambas as direções)
+            // Verifica se já não existe a conexão (em ambas as direções)
             $stmt = $pdo->prepare("SELECT * FROM usuarios_conexoes WHERE id_usuario = ? AND id_conectado = ?");
             $stmt->execute([$id_usuario, $convite['remetente_id']]);
 
@@ -126,7 +126,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao_convite'])) {
                 $stmt->execute([$convite['remetente_id'], $id_usuario]);
             }
 
-            // Adicionar usuário ao projeto (se necessário)
+            // Adiciona usuário ao projeto (se necessário)
             $stmt = $pdo->prepare("SELECT * FROM usuarios_projetos WHERE usuario_id = ? AND projeto_id = ?");
             $stmt->execute([$id_usuario, $convite['projeto_id']]);
 
@@ -147,12 +147,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['acao_convite'])) {
     exit;
 }
 
-// Buscar projetos criados pelo usuário logado
+// Busca projetos criados pelo usuário logado
 $stmt = $pdo->prepare("SELECT id, titulo FROM projetos WHERE criador_id = ?");
 $stmt->execute([$id_usuario]);
 $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Processar inclusão de usuário
+// Processa inclusão de usuário
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     $email = trim($_POST['email']);
 
@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
                 if ($stmt->fetch()) {
                     $mensagem = "Usuário já está na sua lista de conexões.";
                 } else {
-                    // Adicionar conexão em ambas as direções
+                    // Adiciona conexão em ambas as direções
                     $stmt = $pdo->prepare("INSERT INTO usuarios_conexoes (id_usuario, id_conectado) VALUES (?, ?)");
                     $stmt->execute([$id_usuario, $id_conectado]);
 
@@ -191,7 +191,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
     }
 }
 
-// Buscar conexões atuais com informações dos projetos compartilhados
+// Busca conexões atuais com informações dos projetos compartilhados
 $stmt = $pdo->prepare("
     SELECT 
         u.id,
@@ -213,7 +213,7 @@ $stmt = $pdo->prepare("
 $stmt->execute([$id_usuario, $id_usuario, $id_usuario]);
 $conexoes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar convites enviados (pendentes)
+// Busca convites enviados (pendentes)
 $stmt = $pdo->prepare("SELECT c.*, u.nome as destinatario_nome, u.email as destinatario_email, p.titulo as projeto_titulo
     FROM convites_compartilhamento c
     INNER JOIN usuarios u ON c.destinatario_id = u.id
@@ -222,7 +222,7 @@ $stmt = $pdo->prepare("SELECT c.*, u.nome as destinatario_nome, u.email as desti
 $stmt->execute([$id_usuario]);
 $convites_enviados = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar convites recebidos (pendentes)
+// Busca convites recebidos (pendentes)
 $stmt = $pdo->prepare("SELECT c.*, u.nome as remetente_nome, u.email as remetente_email, p.titulo as projeto_titulo
     FROM convites_compartilhamento c
     INNER JOIN usuarios u ON c.remetente_id = u.id
@@ -255,7 +255,7 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <!-- Overlay para fechar menu -->
   <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-  <!-- Sidebar COM ID CORRETO -->
+  <!-- Sidebar -->
   <div class="sidebar" id="sidebar">
         <h4 class="text-center">Menu</h4>
         <a href="index.php"><i class="fa fa-home"></i> Dashboard</a>
@@ -447,7 +447,6 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   <script src="assets/bootstrap/js/bootstrap.min.js"></script>
 
   <script>
-    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -463,7 +462,7 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         document.body.classList.toggle('menu-open');
       });
 
-      // Fechar menu ao clicar no overlay
+      // Fecha menu ao clicar no overlay
       sidebarOverlay.addEventListener('click', function() {
         sidebar.classList.remove('mobile-open');
         sidebarOverlay.classList.remove('active');
@@ -478,7 +477,7 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
           userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
-        // Fechar menu ao clicar fora
+        // Fecha menu ao clicar fora
         document.addEventListener('click', function(event) {
           if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
             userDropdown.classList.remove('show');
@@ -488,7 +487,7 @@ $convites_recebidos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         });
       }
 
-      // Fechar dropdowns ao redimensionar a janela
+      // Fecha dropdowns ao redimensionar a janela
       window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
           sidebar.classList.remove('mobile-open');
