@@ -10,9 +10,7 @@ $acao = $_GET['acao'] ?? null;
 $id = $_GET['id'] ?? null;
 $projeto_id = $_GET['projeto'] ?? null;
 
-// REMOVEMOS A FUNCIONALIDADE DE TOGGLE DIRETO
-// Agora a tarefa só será marcada como concluída via upload de comprovante
-// Este arquivo pode ser usado apenas para desmarcar tarefas se necessário
+// Este arquivo é usado apenas para marcar e desmarcar tarefas 
 
 if ($acao === "desmarcar" && $id && $projeto_id) {
     // verifica se usuário pertence ao projeto
