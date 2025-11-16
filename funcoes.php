@@ -1,5 +1,5 @@
 <?php
-// funcoes.php - Funções úteis para o sistema
+// Funções úteis para o sistema
 
 // Verifica se o usuário está logado
 function verificarLogin()
@@ -81,7 +81,7 @@ function buscarUsuario($pdo, $usuario_id)
     return $stmt->fetch();
 }
 
-/* Criar convite de compartilhamento */
+/* Cria convite de compartilhamento */
 function enviarConviteCompartilhamento($projetoId, $remetenteId, $destinatarioId, $conn)
 {
     $sql = "INSERT INTO convites_compartilhamento (projeto_id, remetente_id, destinatario_id)
@@ -119,7 +119,7 @@ function listarConvitesPendentes($usuarioId, $conn)
     return $convites;
 }
 
-// Aceitar convite de compartilhamento
+// Aceita convite de compartilhamento
 function aceitarConvite($conviteId, $usuarioId, $conn)
 {
     // 1. Atualiza o status do convite
@@ -153,7 +153,7 @@ function aceitarConvite($conviteId, $usuarioId, $conn)
     return false;
 }
 
-// Recusar convite de compartilhamento
+// Recusa convite de compartilhamento
 function recusarConvite($conviteId, $usuarioId, $conn)
 {
     $sql = "UPDATE convites_compartilhamento 
