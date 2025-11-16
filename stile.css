@@ -1,6 +1,6 @@
-/* style.css - Estilos do Sistema de Projetos
+/* Estilos do Sistema de Projetos
 
-/* ===== RESET E CONFIGURAÇÕES GLOBAIS ===== */
+/* ===== CONFIGURAÇÕES GLOBAIS ===== */
 * {
     margin: 0;
     padding: 0;
@@ -780,6 +780,37 @@ body.menu-open {
     margin-bottom: 1rem;
 }
 
+.comprovante-container {
+    max-height: 300px;
+    overflow: hidden;
+}
+
+.comprovante-imagem {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+
+.modal-improved .modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .container-fluid .row.g-0 .col-md-6 {
+        padding: 1rem !important;
+    }
+
+    .modal-improved .modal-dialog {
+        margin: 10px;
+    }
+
+    .comprovante-imagem {
+        max-height: 200px;
+    }
+}
+
 /* Notas */
 .notes-grid {
     display: grid;
@@ -1008,7 +1039,7 @@ body.menu-open {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background: linear-gradient(90deg,  #4299e1 50%, #2b6cb0 100%);
+    background: linear-gradient(90deg, #4299e1 50%, #2b6cb0 100%);
     border-radius: 2px;
 }
 
@@ -1310,7 +1341,6 @@ body.menu-open {
     font-size: 1rem;
 }
 
-/* Estilos para conteúdo markdown básico */
 .note-content strong {
     font-weight: bold;
     color: #333;
@@ -1547,7 +1577,7 @@ body.menu-open {
     .form-textarea,
     .form-select {
         font-size: 16px;
-        /* Previne zoom no iOS */
+       
     }
 }
 
@@ -1613,35 +1643,35 @@ body.menu-open {
     background-color: #9b59b6;
 }
 
-/* ===== CORREÇÃO DEFINITIVA - MENU DO USUÁRIO NO MOBILE ===== */
+/* ===== MENU DO USUÁRIO NO MOBILE ===== */
 
 @media (max-width: 768px) {
-    /* REMOVER todo padding-bottom excessivo do sidebar */
+
     .sidebar {
-        padding-bottom: 20px; /* Apenas um pequeno espaçamento */
+        padding-bottom: 20px;
         height: 100vh;
         overflow-y: auto;
         display: flex;
         flex-direction: column;
     }
-    
-    /* MENU DO USUÁRIO - manter no fluxo normal, mas no FINAL */
+
+    /* MENU DO USUÁRIO  */
     .user-menu {
-        position: relative; /* Voltar ao fluxo normal */
-        bottom: auto; /* Remover posicionamento fixo */
+        position: relative;
+        bottom: auto;
         top: auto;
         left: auto;
         width: 100%;
-        margin-top: auto; /* Isso empurra para o final */
+        margin-top: auto;
         background-color: #343a40;
         z-index: 1002;
         border-top: 1px solid #495057;
     }
-    
-    /* DROPDOWN - ajustar posicionamento */
+
+    /* DROPDOWN */
     .user-dropdown {
         position: absolute;
-        bottom: 100%; /* Abre para cima */
+        bottom: 100%;
         left: 0;
         width: 100%;
         z-index: 1003;
@@ -1649,18 +1679,16 @@ body.menu-open {
         max-height: 200px;
         overflow-y: auto;
     }
-    
-    /* CONTEÚDO PRINCIPAL - ajustar espaçamento */
+
     .content {
-        padding-bottom: 20px; /* Espaçamento normal */
+        padding-bottom: 20px;
     }
-    
-    /* GARANTIR que o sidebar ocupe a altura correta */
+
     body.menu-open {
         overflow: hidden;
         height: 100vh;
     }
-    
+
     .sidebar.mobile-open {
         transform: translateX(0);
         box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
@@ -1672,7 +1700,7 @@ body.menu-open {
     .sidebar {
         padding-bottom: 15px;
     }
-    
+
     .user-info {
         padding: 10px 15px;
     }
@@ -1681,17 +1709,16 @@ body.menu-open {
 /* ===== CORREÇÕES PARA SIDEBAR MOBILE E BOTÕES DE NAVEGAÇÃO ===== */
 
 @media (max-width: 768px) {
-    /* Ajuste da altura da sidebar considerando safe area */
+
     .sidebar {
         height: 100vh;
-        height: 100dvh; /* Usa dynamic viewport height quando suportado */
+        height: 100dvh;
         padding-top: env(safe-area-inset-top, 60px);
         padding-bottom: env(safe-area-inset-bottom, 20px);
         padding-left: env(safe-area-inset-left, 0);
         padding-right: env(safe-area-inset-right, 0);
     }
-    
-    /* Garantir que o menu do usuário fique sempre visível e acessível */
+
     .user-menu {
         position: sticky;
         bottom: 0;
@@ -1702,19 +1729,16 @@ body.menu-open {
         margin-top: auto;
         padding-bottom: env(safe-area-inset-bottom, 0);
     }
-    
-    /* Ajuste do conteúdo principal para não ser sobreposto */
+
     .content {
         padding-bottom: env(safe-area-inset-bottom, 20px);
     }
-    
-    /* Ajuste do botão do menu mobile para considerar safe area */
+
     .mobile-menu-btn {
         top: env(safe-area-inset-top, 15px);
         left: env(safe-area-inset-left, 15px);
     }
-    
-    /* Garantir que o overlay ocupe toda a tela considerando safe area */
+
     .sidebar-overlay {
         top: env(safe-area-inset-top, 0);
         left: env(safe-area-inset-left, 0);
@@ -1723,59 +1747,53 @@ body.menu-open {
     }
 }
 
-/* Fallback para navegadores que não suportam env() */
 @supports not (height: 100dvh) {
     @media (max-width: 768px) {
         .sidebar {
-            /* Altura mais conservadora para navegadores antigos */
             height: calc(100vh - 60px);
         }
     }
 }
 
-/* Melhorias para dispositivos com notch ou áreas irregulares */
 @media (max-width: 768px) and (orientation: portrait) {
     .sidebar {
-        /* Ajuste extra para portrait */
         padding-top: max(env(safe-area-inset-top), 60px);
     }
 }
 
 @media (max-width: 768px) and (orientation: landscape) {
     .sidebar {
-        /* Ajuste para landscape - menos altura disponível */
         padding-top: max(env(safe-area-inset-top), 40px);
     }
-    
+
     .user-menu {
-        position: relative; /* Em landscape, pode ficar no fluxo normal */
+        position: relative;
     }
 }
 
-/* Garantir que o scroll funcione corretamente na sidebar */
 .sidebar {
-    -webkit-overflow-scrolling: touch; /* Scroll suave no iOS */
-    overscroll-behavior: contain; /* Previne scroll da página principal quando chega no fim da sidebar */
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
 }
 
 /* Ajuste fino para o menu do usuário no mobile */
 @media (max-width: 768px) {
     .user-info {
-        min-height: 60px; /* Altura mínima para fácil toque */
+        min-height: 60px;
     }
-    
+
     .user-dropdown a {
-        min-height: 44px; /* Altura mínima recomendada para elementos touch */
+        min-height: 44px;
         display: flex;
         align-items: center;
     }
 }
 
-/* Prevenir zoom em inputs no iOS */
 @media (max-width: 768px) {
+
     .sidebar input,
     .sidebar select,
     .sidebar textarea {
-        font-size: 16px; /* Previne zoom automático no iOS */
+        font-size: 16px;
     }
 }
