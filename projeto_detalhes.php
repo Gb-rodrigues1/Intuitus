@@ -94,23 +94,76 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['comprovante_tarefa_id
 
     // Verifica se o arquivo foi enviado
     if (isset($_FILES['comprovante_imagem']) && $_FILES['comprovante_imagem']['error'] === UPLOAD_ERR_OK) {
-        $uploadDir = 'comprovantes/';
+        
+        // Configurações do upload
+        $uploadDir = __DIR__ . '/comprovantes/';
+        $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+        $maxFileSize = 5 * 1024 * 1024; // 5MB
+
+        // Cria o diretório se não existir
         if (!is_dir($uploadDir)) {
             mkdir($uploadDir, 0755, true);
         }
 
-        $fileName = time() . '_' . basename($_FILES['comprovante_imagem']['name']);
+        // Verifica se é uma imagem válida
+        $fileInfo = finfo_open(FILEINFO_MIME_TYPE);
+        $mimeType = finfo_file($fileInfo, $_FILES['comprovante_imagem']['tmp_name']);
+        finfo_close($fileInfo);
+
+        if (!in_array($mimeType, $allowedTypes)) {
+            $_SESSION['mensagem'] = "Erro: Apenas imagens JPEG, PNG, GIF e WebP são permitidas.";
+            $_SESSION['tipo_mensagem'] = "error";
+            header("Location: projeto_detalhes.php?id=$projeto_id");
+            exit;
+        }
+
+        // Verifica o tamanho do arquivo
+        if ($_FILES['comprovante_imagem']['size'] > $maxFileSize) {
+            $_SESSION['mensagem'] = "Erro: O arquivo é muito grande. Tamanho máximo: 5MB.";
+            $_SESSION['tipo_mensagem'] = "error";
+            header("Location: projeto_detalhes.php?id=$projeto_id");
+            exit;
+        }
+
+        // Gera nome único para o arquivo
+        $fileExtension = pathinfo($_FILES['comprovante_imagem']['name'], PATHINFO_EXTENSION);
+        $fileName = uniqid('comprovante_', true) . '_' . $tarefa_id . '.' . $fileExtension;
         $uploadFile = $uploadDir . $fileName;
 
-        // Mover arquivo para o diretório de comprovantes
+        // Move o arquivo para o diretório
         if (move_uploaded_file($_FILES['comprovante_imagem']['tmp_name'], $uploadFile)) {
-            // Atualiza banco de dados com o caminho do comprovante E marca como concluída
+            // Caminho relativo para salvar no banco
+            $relativePath = 'comprovantes/' . $fileName;
+            
+            // Atualiza banco de dados
             $stmt = $pdo->prepare("UPDATE tarefas SET comprovante = ?, concluida = 1, concluida_por = ?, concluida_em = NOW() WHERE id = ?");
-            $stmt->execute([$uploadFile, $_SESSION['usuario_id'], $tarefa_id]);
-
-            $_SESSION['mensagem'] = "Comprovante enviado e tarefa marcada como concluída!";
-            $_SESSION['tipo_mensagem'] = "success";
+            if ($stmt->execute([$relativePath, $_SESSION['usuario_id'], $tarefa_id])) {
+                $_SESSION['mensagem'] = "Comprovante enviado e tarefa marcada como concluída!";
+                $_SESSION['tipo_mensagem'] = "success";
+            } else {
+                // Se houve erro no banco, remove o arquivo
+                unlink($uploadFile);
+                $_SESSION['mensagem'] = "Erro ao atualizar o banco de dados.";
+                $_SESSION['tipo_mensagem'] = "error";
+            }
+        } else {
+            $_SESSION['mensagem'] = "Erro ao fazer upload do arquivo. Verifique as permissões do diretório.";
+            $_SESSION['tipo_mensagem'] = "error";
         }
+    } else {
+        $uploadErrors = [
+            UPLOAD_ERR_INI_SIZE => 'Arquivo muito grande (limite do servidor)',
+            UPLOAD_ERR_FORM_SIZE => 'Arquivo muito grande (limite do formulário)',
+            UPLOAD_ERR_PARTIAL => 'Upload parcialmente feito',
+            UPLOAD_ERR_NO_FILE => 'Nenhum arquivo selecionado',
+            UPLOAD_ERR_NO_TMP_DIR => 'Pasta temporária não encontrada',
+            UPLOAD_ERR_CANT_WRITE => 'Erro ao escrever no disco',
+            UPLOAD_ERR_EXTENSION => 'Upload interrompido por extensão'
+        ];
+        
+        $errorMsg = $uploadErrors[$_FILES['comprovante_imagem']['error']] ?? 'Erro desconhecido';
+        $_SESSION['mensagem'] = "Erro no upload: " . $errorMsg;
+        $_SESSION['tipo_mensagem'] = "error";
     }
 
     header("Location: projeto_detalhes.php?id=$projeto_id");
