@@ -16,12 +16,12 @@ if (isset($_GET['mensagem'])) {
     $mensagem = $_GET['mensagem'];
 }
 
-// Buscar informações do usuário para mostrar na sidebar
+// Busca informações do usuário para mostrar na sidebar
 $stmtUsuario = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$usuario_id]);
 $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
 
-// Gerar iniciais do usuário
+// Gera iniciais do usuário
 $iniciais = '';
 if ($usuario && isset($usuario['nome'])) {
     $nomes = explode(' ', $usuario['nome']);
@@ -33,7 +33,7 @@ if ($usuario && isset($usuario['nome'])) {
     $iniciais = 'U';
 }
 
-// Criar nova nota
+// Cria nova nota
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo']) && !isset($_POST['editar_nota'])) {
     $titulo = trim($_POST['titulo']);
     $conteudo = trim($_POST['conteudo'] ?? '');
@@ -44,7 +44,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo']) && !isset($
     $tipo = $_POST['tipo'] ?? 'texto';
 
     if (!empty($titulo)) {
-        // Verificar se o usuário tem acesso ao projeto (se estiver vinculando a um projeto)
+        // Verifica se o usuário tem acesso ao projeto (se estiver vinculando a um projeto)
         if ($projeto_id) {
             $stmt = $pdo->prepare("
                 SELECT COUNT(*) 
@@ -81,7 +81,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['editar_nota'])) {
     $prioridade = $_POST['prioridade'] ?? 'media';
     $cor = '#ffffff'; // Cor fixa
 
-    // Verificar se a nota pertence ao usuário OU se o usuário é dono do projeto da nota
+    // Verifica se a nota pertence ao usuário OU se o usuário é dono do projeto da nota
     $stmt = $pdo->prepare("
         SELECT n.id, n.usuario_id, p.criador_id, p.id as projeto_id
         FROM notas n 
@@ -92,7 +92,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['editar_nota'])) {
     $nota_info = $stmt->fetch();
     
     if ($nota_info) {
-        // Verificar acesso ao projeto (se estiver vinculando a um projeto diferente)
+        // Verifica acesso ao projeto (se estiver vinculando a um projeto diferente)
         if ($projeto_id && $projeto_id != $nota_info['projeto_id']) {
             $stmt = $pdo->prepare("
                 SELECT COUNT(*) 
@@ -109,7 +109,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['editar_nota'])) {
             }
         }
 
-        // ATUALIZAÇÃO CORRIGIDA - Usar prepared statement corretamente
+        // Update no banco de dados
         $stmt = $pdo->prepare("UPDATE notas SET titulo = ?, conteudo = ?, projeto_id = ?, categoria = ?, prioridade = ?, cor = ?, atualizado_em = NOW() WHERE id = ?");
         
         if ($stmt->execute([$titulo, $conteudo, $projeto_id, $categoria, $prioridade, $cor, $nota_id])) {
@@ -127,7 +127,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['editar_nota'])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['excluir_nota'])) {
     $nota_id = intval($_POST['nota_id']);
 
-    // Verificar se a nota pertence ao usuário OU se o usuário é dono do projeto
+    // Verifica se a nota pertence ao usuário OU se o usuário é dono do projeto
     $stmt = $pdo->prepare("
         SELECT n.id, n.usuario_id, p.criador_id 
         FROM notas n 
@@ -154,7 +154,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['excluir_nota'])) {
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['toggle_concluida'])) {
     $nota_id = intval($_POST['nota_id']);
 
-    // Verificar se a nota pertence ao usuário OU se o usuário é dono do projeto
+    // Verifica se a nota pertence ao usuário OU se o usuário é dono do projeto
     $stmt = $pdo->prepare("
         SELECT n.id, n.concluida, n.usuario_id, p.criador_id 
         FROM notas n 
@@ -178,7 +178,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['toggle_concluida'])) 
     }
 }
 
-// Buscar projetos do usuário para o select (incluindo projetos compartilhados)
+// Busca projetos do usuário para o select (incluindo projetos compartilhados)
 $stmt_projetos = $pdo->prepare("
     SELECT p.id, p.titulo 
     FROM projetos p 
@@ -189,7 +189,7 @@ $stmt_projetos = $pdo->prepare("
 $stmt_projetos->execute([$usuario_id]);
 $projetos = $stmt_projetos->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar notas do usuário E notas dos projetos compartilhados
+// Busca notas do usuário E notas dos projetos compartilhados
 $categoria_filtro = $_GET['categoria'] ?? '';
 $projeto_filtro = $_GET['projeto'] ?? '';
 $prioridade_filtro = $_GET['prioridade'] ?? '';
@@ -253,7 +253,7 @@ $stmt_notas = $pdo->prepare($sql);
 $stmt_notas->execute($params);
 $notas = $stmt_notas->fetchAll(PDO::FETCH_ASSOC);
 
-// Buscar categorias únicas para o filtro (apenas das notas que o usuário tem acesso)
+// Busca categorias únicas para o filtro (apenas das notas que o usuário tem acesso)
 $stmt_categorias = $pdo->prepare("
     SELECT DISTINCT categoria 
     FROM notas 
@@ -300,7 +300,7 @@ $categorias = $stmt_categorias->fetchAll(PDO::FETCH_COLUMN);
       <a href="notas.php"><i class="fa fa-sticky-note"></i> Notas</a>
       <a href="usuarios.php"><i class="fa fa-users"></i> Usuários</a>
       
-      <!-- Menu do Usuário Corrigido -->
+      <!-- Menu do Usuário -->
       <div class="user-menu">
           <div class="user-info" id="userMenuToggle">
               <div class="user-avatar">
@@ -346,6 +346,8 @@ $categorias = $stmt_categorias->fetchAll(PDO::FETCH_COLUMN);
                     <div class="col-md-8">
                         <div class="row g-2 align-items-center">
                             <div class="col-md-3">
+
+                                <!-- Filtros -->
                                 <select class="form-select form-select-sm" onchange="filtrarNotas()" id="filtroCategoria">
                                     <option value="">Todas categorias</option>
                                     <?php foreach ($categorias as $cat): ?>
@@ -638,7 +640,7 @@ $categorias = $stmt_categorias->fetchAll(PDO::FETCH_COLUMN);
             userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
-        // Fechar menu ao clicar fora
+        // Fecha menu ao clicar fora
         document.addEventListener('click', function(event) {
             if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
                 userDropdown.classList.remove('show');
