@@ -9,12 +9,12 @@ if (!isset($_SESSION['usuario_id'])) {
 
 $usuario_id = $_SESSION['usuario_id'];
 
-// Buscar informações do usuário para mostrar na sidebar
+// Busca informações do usuário para mostrar na sidebar
 $stmtUsuario = $pdo->prepare("SELECT nome, email FROM usuarios WHERE id = ?");
 $stmtUsuario->execute([$usuario_id]);
 $usuario = $stmtUsuario->fetch(PDO::FETCH_ASSOC);
 
-// Gerar iniciais do usuário
+// Gera iniciais do usuário
 $iniciais = '';
 if ($usuario && isset($usuario['nome'])) {
     $nomes = explode(' ', $usuario['nome']);
@@ -26,7 +26,7 @@ if ($usuario && isset($usuario['nome'])) {
     $iniciais = 'U';
 }
 
-// Criar projeto
+// Cria projeto
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo'], $_POST['descricao'])) {
     $titulo = trim($_POST['titulo']);
     $descricao = trim($_POST['descricao']);
@@ -38,7 +38,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo'], $_POST['des
 
         $projeto_id = $pdo->lastInsertId();
 
-        // adiciona criador na tabela usuarios_projetos
+        // Adiciona criador na tabela usuarios_projetos
         $stmt2 = $pdo->prepare("INSERT INTO usuarios_projetos (usuario_id, projeto_id) VALUES (?, ?)");
         $stmt2->execute([$usuario_id, $projeto_id]);
 
@@ -47,12 +47,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST['titulo'], $_POST['des
     }
 }
 
-// Deletar Projeto
+// Deleta Projeto
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['remover']) && isset($_POST['remover_id'])) {
     $rem_id = intval($_POST['remover_id']);
     $usuario_id = $_SESSION['usuario_id'];
 
-    // Verificar se o usuário é o criador do projeto
+    // Verifica se o usuário é o criador do projeto
     $stmt = $pdo->prepare("SELECT criador_id FROM projetos WHERE id = ?");
     $stmt->execute([$rem_id]);
     $criador_id = $stmt->fetchColumn();
@@ -149,7 +149,7 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
     </div>
   </div>
 
-  <!-- CONTEÚDO PRINCIPAL COM CLASSE CORRETA -->
+  <!-- Conteúdo principal -->
   <div class="content">
     <h1>Meus Projetos</h1>
 
@@ -191,7 +191,6 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
   </div>
 
   <script>
-    // ADICIONAR SCRIPTS DE CONTROLE DO MENU MOBILE (igual ao do index.php)
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
       const sidebar = document.getElementById('sidebar');
@@ -207,7 +206,7 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         document.body.classList.toggle('menu-open');
       });
 
-      // Fechar menu ao clicar no overlay
+      // Fecha menu ao clicar no overlay
       sidebarOverlay.addEventListener('click', function() {
         sidebar.classList.remove('mobile-open');
         sidebarOverlay.classList.remove('active');
@@ -222,7 +221,7 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
           userMenuChevron.classList.toggle('fa-chevron-down');
         });
         
-        // Fechar menu ao clicar fora
+        // Fecha menu ao clicar fora
         document.addEventListener('click', function(event) {
           if (!userMenuToggle.contains(event.target) && !userDropdown.contains(event.target)) {
             userDropdown.classList.remove('show');
@@ -232,7 +231,7 @@ $projetos = $stmt->fetchAll(PDO::FETCH_ASSOC);
         });
       }
 
-      // Fechar dropdowns ao redimensionar a janela
+      // Fecha dropdowns ao redimensionar a janela
       window.addEventListener('resize', function() {
         if (window.innerWidth > 768) {
           sidebar.classList.remove('mobile-open');
