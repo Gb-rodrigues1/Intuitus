@@ -1,135 +1,1806 @@
-<?php
-// Página de cadastro de novos usuários
-require_once 'config.php';
+/* Estilos do Sistema de Projetos
 
-$erro = '';
-$sucesso = '';
-
-// Se já está logado, redireciona para dashboard
-if (isset($_SESSION['usuario_id'])) {
-    header('Location: index.php');
-    exit;
+/* ===== CONFIGURAÇÕES GLOBAIS ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
-// Processa o cadastro
-if ($_POST) {
-    $nome = trim($_POST['nome']);
-    $email = trim($_POST['email']);
-    $senha = $_POST['senha'];
-    $confirmar_senha = $_POST['confirmar_senha'];
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: #333;
+    line-height: 1.6;
+    min-height: 100vh;
+}
 
-    // Validações básicas
-    if (!$nome || !$email || !$senha || !$confirmar_senha) {
-        $erro = 'Preencha todos os campos!';
-    } elseif ($senha !== $confirmar_senha) {
-        $erro = 'As senhas não coincidem!';
-    } elseif (strlen($senha) < 6) {
-        $erro = 'A senha deve ter pelo menos 6 caracteres!';
-    } elseif (!preg_match('/[A-Z]/', $senha)) {
-        $erro = 'A senha deve ter pelo menos 1 caracter maiúsculo!';
-    } elseif (!preg_match('/[^a-zA-Z0-9]/', $senha)) {
-        $erro = 'A senha deve conter pelo menos 1 caracter especial';
-    } else {
-        // Verifica se email já existe
-        $sql = "SELECT id FROM usuarios WHERE email = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->execute([$email]);
+html {
+    scroll-behavior: smooth;
+}
 
-        if ($stmt->fetch()) {
-            $erro = 'Este email já está cadastrado!';
-        } else {
-            // Cadastra o usuário
-            $senha_hash = password_hash($senha, PASSWORD_DEFAULT);
-            $sql = "INSERT INTO usuarios (nome, email, senha, criado_em) VALUES (?, ?, ?, NOW())";
-            $stmt = $pdo->prepare($sql);
+/* ===== COMPONENTES DE LAYOUT ===== */
 
-            if ($stmt->execute([$nome, $email, $senha_hash])) {
-                $sucesso = 'Cadastro realizado com sucesso! Você já pode fazer login.';
-            } else {
-                $erro = 'Erro ao cadastrar. Tente novamente.';
-            }
+/* Cabeçalho */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 1rem 0;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.header-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+/* Containers principais */
+.container {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+.container-with-sidebar {
+    margin-left: 0;
+    padding: 20px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.container2 {
+    margin-left: 220px;
+    padding: 20px;
+    width: calc(100% - 220px);
+    transition: all 0.3s ease;
+}
+
+.content {
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.main-content {
+    margin-left: 220px;
+    padding: 20px;
+    min-height: 100vh;
+    transition: margin-left 0.3s ease;
+    width: calc(100% - 220px);
+}
+
+/* ===== COMPONENTES DE CARDS E GRIDS ===== */
+
+/* Cards básicos */
+.card {
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.card-moldura {
+    width: 100%;
+    margin-bottom: 1rem;
+}
+
+.card-fundo {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    word-wrap: break-word;
+    background-color: #fff;
+    background-clip: border-box;
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.375rem;
+}
+
+/* Cards de estatísticas */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #666;
+    font-size: 0.9rem;
+}
+
+.stat-icon {
+    margin-bottom: 10px;
+}
+
+/* Cores para diferentes tipos de estatísticas */
+.stat-total .stat-number {
+    color: #3498db;
+}
+
+.stat-pendente .stat-number {
+    color: #f39c12;
+}
+
+.stat-progresso .stat-number {
+    color: #9b59b6;
+}
+
+.stat-concluida .stat-number {
+    color: #27ae60;
+}
+
+/* Grid de projetos */
+.projects-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.project-card {
+    background: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    padding: 20px;
+    transition: all 0.2s;
+}
+
+.project-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.project-title {
+    font-size: 1.1rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.project-description {
+    color: #666;
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+.project-stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-size: 0.8rem;
+}
+
+.project-stat {
+    text-align: center;
+}
+
+.project-stat-number {
+    font-weight: bold;
+    display: block;
+}
+
+/* ===== COMPONENTES DE FORMULÁRIO ===== */
+
+.form-container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    height: 2.5rem;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    cursor: pointer;
+}
+
+.form-textarea {
+    height: 100px;
+    resize: vertical;
+}
+
+.form-custom .list-group {
+    width: 100%;
+    margin-bottom: 10px;
+}
+
+/* ===== COMPONENTES DE BOTÃO ===== */
+
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+    text-align: center;
+    width: 100%;
+}
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.btn:focus {
+    outline: 2px solid #667eea;
+    outline-offset: 2px;
+}
+
+/* Variantes de botão */
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a6fd8;
+}
+
+.btn-secondary {
+    background: #95a5a6;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #7f8c8d;
+}
+
+.btn-login {
+    width: 100%;
+    height: 2.5rem;
+    background-color: #2563eb;
+    color: white;
+    border-radius: 0.375rem;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+}
+
+.btn-logout {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    text-decoration: none;
+}
+
+.btn-logout:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.btn-link-login:hover {
+    text-decoration: underline;
+}
+
+/* ===== COMPONENTES DE LISTA E GRUPO ===== */
+
+.list-group {
+    position: relative;
+    display: block;
+    padding: 0.75rem 1.25rem;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    color: #212529;
+    text-decoration: none;
+    width: 100%;
+    max-width: 100%;
+    margin-bottom: 10px;
+    border-radius: 0.375rem;
+}
+
+input.list-group {
+    margin-bottom: 1%;
+}
+
+li.list-group {
+    margin-bottom: 10px;
+}
+
+.projetos-lista {
+    list-style: none;
+    padding: 0;
+}
+
+.projeto-item {
+    margin-bottom: 10px;
+}
+
+/* ===== LAYOUTS ESPECÍFICOS ===== */
+
+/* Login */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.login-box {
+    width: 100%;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+.login-title {
+    text-align: center;
+    margin-bottom: 30px;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.cabecalho-login {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+    font-size: 1.5rem;
+}
+
+.logo-login {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: #2563eb;
+}
+
+.rodape-login {
+    margin-top: 1.5rem;
+    text-align: center;
+    font-size: 0.875rem;
+    color: #6b7280;
+}
+
+.rodape-login p {
+    margin: 2px;
+}
+
+.texto-cadastro {
+    margin-top: 0.5rem;
+    color: #2563eb;
+    text-decoration: none;
+}
+
+.label-cadastro {
+    text-align: center;
+    margin-top: 20px;
+}
+
+/* Sidebar */
+.sidebar {
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    background-color: #343a40;
+    color: #fff;
+    padding-top: 20px;
+    z-index: 1000;
+    transition: transform 0.3s ease;
+    overflow-y: auto;
+    padding-bottom: 70px;
+}
+
+.sidebar a {
+    color: #fff;
+    text-decoration: none;
+    display: block;
+    padding: 12px 15px;
+    border-bottom: 1px solid #495057;
+    transition: background-color 0.2s;
+}
+
+.sidebar a:hover {
+    background-color: #495057;
+}
+
+.sidebar a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+.sidebar h4 {
+    padding: 20px 15px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #495057;
+    font-size: 1.3rem;
+}
+
+/* Menu do usuário */
+.user-menu {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #343a40;
+    border-top: 1px solid #495057;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    gap: 15px;
+}
+
+.user-info:hover {
+    background-color: #495057;
+}
+
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    color: white;
+    margin-right: 10px;
+    font-size: 14px;
+}
+
+.user-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.user-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+}
+
+.user-email {
+    font-size: 12px;
+    color: #adb5bd;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-dropdown {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    background-color: #495057;
+    border-bottom: 1px solid #495057;
+    display: none;
+    z-index: 1001;
+}
+
+.user-dropdown.show {
+    display: block;
+}
+
+.user-dropdown a {
+    display: flex;
+    align-items: center;
+    padding: 12px 15px;
+    color: #fff;
+    text-decoration: none;
+    border-bottom: 1px solid #5a6268;
+    transition: background-color 0.2s;
+}
+
+.user-dropdown a:hover {
+    background-color: #5a6268;
+}
+
+.user-dropdown a:last-child {
+    border-bottom: none;
+}
+
+.user-dropdown a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+/* Menu mobile */
+.mobile-menu-btn {
+    display: none;
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    z-index: 1003;
+    background: #343a40;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 12px;
+    font-size: 1.2rem;
+    cursor: pointer;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1001;
+}
+
+.sidebar-overlay.active {
+    display: block;
+}
+
+body.menu-open {
+    overflow: hidden;
+}
+
+/* ===== COMPONENTES DE LAYOUT FLEX/GRID ===== */
+
+.linha {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    gap: 15px;
+}
+
+.linha-index {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.gtr3500 {
+    display: flex;
+    gap: 1rem;
+}
+
+.conteudo {
+    width: 100%;
+    padding: 20px;
+}
+
+.projects-section {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #eee;
+}
+
+.section-title {
+    font-size: 1.3rem;
+    color: #333;
+}
+
+/* ===== COMPONENTES DE AÇÃO ===== */
+
+.project-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.acoes-tarefa {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.acoes-tarefa .btn {
+    white-space: nowrap;
+    flex: 1;
+    min-width: auto;
+    width: auto;
+}
+
+.btn-remover {
+    white-space: nowrap;
+    min-width: 80px;
+}
+
+/* ===== COMPONENTES DE BADGE ===== */
+
+.badge-criador {
+    background-color: #28a745;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    margin-left: 8px;
+}
+
+.badge-participante {
+    background-color: #6c757d;
+    color: white;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75em;
+    margin-left: 8px;
+}
+
+.badge-contador {
+    font-size: 0.8em;
+    margin-left: 8px;
+}
+
+.badge.bg-info {
+    font-size: 0.7em;
+    padding: 0.25rem 0.5rem;
+}
+
+.badge.bg-secondary {
+    font-size: 0.7em;
+    padding: 0.25rem 0.5rem;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+}
+
+.status-pendente {
+    background-color: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeaa7;
+}
+
+.status-concluido {
+    background-color: #d1ecf1;
+    color: #0c5460;
+    border: 1px solid #bee5eb;
+}
+
+/* ===== COMPONENTES DE ALERTA ===== */
+
+.alert {
+    padding: 10px 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alert-error {
+    background: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+.alert-success {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+/* ===== COMPONENTES ESPECÍFICOS DE PÁGINAS ===== */
+
+/* Projeto Detalhes */
+.fsize {
+    width: 100%;
+}
+
+.tarefa-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    background-color: white;
+    border-radius: 6px;
+    border-left: 4px solid #ffc107;
+}
+
+.tarefa-concluida {
+    border-left: 4px solid #28a745;
+}
+
+.criador-projeto {
+    font-size: 1.1em;
+    color: #6c757d;
+    margin-bottom: 1rem;
+}
+
+.comprovante-container {
+    max-height: 500px;
+    overflow: hidden;
+}
+
+.comprovante-imagem {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+
+.modal-improved .modal-body {
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+@media (max-width: 768px) {
+    .container-fluid .row.g-0 .col-md-6 {
+        padding: 1rem !important;
+    }
+
+    .modal-improved .modal-dialog {
+        margin: 10px;
+    }
+
+    .comprovante-imagem {
+        max-height: 350px;
+    }
+}
+
+/* Registro */
+.senha-info {
+    font-size: 0.8rem;
+    color: rgba(102, 102, 102, 0.6);
+    margin-top: 5px;
+    font-style: italic;
+}
+
+/* Notas */
+.notes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.notes-toolbar {
+    background: #F8F8F8;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    border: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.note-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    border-left: 6px solid #dee2e6;
+    height: fit-content;
+    min-height: 200px;
+    display: flex;
+    flex-direction: column;
+}
+
+.note-card:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+}
+
+.note-card.concluida {
+    opacity: 0.7;
+    background-color: #f8f9fa;
+}
+
+.note-card.concluida .note-title {
+    text-decoration: line-through;
+}
+
+.note-card.sem-projeto {
+    cursor: default;
+}
+
+.note-card.sem-projeto:hover {
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transform: none;
+}
+
+/* Sobre Nós*/
+.sobre-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.sobre-card-body {
+    padding: 3rem !important;
+}
+
+.sobre-header {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
+    border-radius: 16px;
+    margin-bottom: 3rem;
+    border: 1px solid #e3f2fd;
+}
+
+.prelude-logo {
+    font-size: 4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    letter-spacing: -2px;
+    background: linear-gradient(135deg, #2b6cb0 0%, #4299e1 50%, #bee3f8 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.tagline {
+    font-size: 1.5rem;
+    color: #7f8c8d;
+    font-weight: 300;
+    margin-bottom: 2rem;
+}
+
+.intro-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.mission-section {
+    background: #f8f9fa;
+    border-radius: 16px;
+    padding: 3rem;
+    margin: 3rem 0;
+    border-left: 6px solid #3498db;
+    border-right: 1px solid #e9ecef;
+    border-top: 1px solid #e9ecef;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.mission-text {
+    font-size: 1.2rem;
+    line-height: 1.8;
+    color: #5a6c7d;
+}
+
+.team-member-card {
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 2.5rem 2rem;
+    height: 100%;
+    background: white;
+    text-align: center;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.team-member-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, #4299e1);
+}
+
+.team-member-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+}
+
+.member-icon {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+    font-size: 2.5rem;
+    color: white;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.team-member-card:hover .member-icon {
+    transform: scale(1.1);
+}
+
+.icon-documentacao {
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
+}
+
+.icon-banco-dados {
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
+}
+
+.icon-fullstack {
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
+}
+
+.icon-design {
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
+}
+
+.icon-analise {
+    background: linear-gradient(135deg, #4299e1 0%, #4299e1 100%);
+    box-shadow: 0 8px 20px #bee3f8;
+}
+
+.team-member-name {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+}
+
+.member-role {
+    font-size: 1.1rem;
+    color: #7f8c8d;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.member-bio {
+    font-size: 1rem;
+    color: #5a6c7d;
+    line-height: 1.6;
+}
+
+.section-title {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 3rem;
+    position: relative;
+    padding-bottom: 1rem;
+    text-align: center;
+    font-size: 2.2rem;
+}
+
+.section-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #4299e1 50%, #2b6cb0 100%);
+    border-radius: 2px;
+}
+
+.inspiration-quote {
+    font-style: italic;
+    color: #5a6c7d;
+    border-left: 4px solid #3498db;
+    padding: 2rem 2rem 2rem 4rem;
+    margin: 2.5rem 0;
+    font-size: 1.3rem;
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 12px;
+    position: relative;
+    line-height: 1.7;
+}
+
+.inspiration-quote::before {
+    content: '\f10d';
+    font-family: 'Font Awesome 6 Free';
+    font-weight: 900;
+    font-size: 2.5rem;
+    color: #3498db;
+    position: absolute;
+    left: 1rem;
+    top: 1.5rem;
+    opacity: 0.3;
+}
+
+.quote-author {
+    display: block;
+    text-align: right;
+    font-style: normal;
+    font-weight: 600;
+    color: #3498db;
+    margin-top: 1rem;
+    font-size: 1rem;
+}
+
+@media (max-width: 768px) {
+    .sobre-card-body {
+        padding: 2rem !important;
+    }
+
+    .sobre-header {
+        padding: 2.5rem 1.5rem;
+    }
+
+    .prelude-logo {
+        font-size: 3rem;
+    }
+
+    .mission-section {
+        padding: 2rem;
+    }
+
+    .team-member-card {
+        padding: 2rem 1.5rem;
+    }
+
+    .member-icon {
+        width: 80px;
+        height: 80px;
+        font-size: 2rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+    }
+
+    .inspiration-quote {
+        padding: 1.5rem 1.5rem 1.5rem 3rem;
+        font-size: 1.1rem;
+    }
+
+    .inspiration-quote::before {
+        font-size: 2rem;
+        left: 0.8rem;
+        top: 1.2rem;
+    }
+}
+
+/* Cores das bordas por prioridade */
+.note-card.alta {
+    border-left-color: #dc3545;
+}
+
+.note-card.media {
+    border-left-color: #ffc107;
+}
+
+.note-card.baixa {
+    border-left-color: #28a745;
+}
+
+.note-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.note-title {
+    font-weight: bold;
+    font-size: 1.2em;
+    flex: 1;
+    margin-right: 10px;
+    color: #333;
+    line-height: 1.3;
+}
+
+.note-priority {
+    font-size: 0.8em;
+    white-space: nowrap;
+}
+
+.note-category {
+    font-size: 0.9em;
+    color: #6c757d;
+    font-style: italic;
+    margin-bottom: 12px;
+}
+
+.note-content {
+    margin-bottom: 18px;
+    line-height: 1.4;
+    flex: 1;
+    overflow: hidden;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.note-content p {
+    margin-bottom: 0.5rem;
+}
+
+.note-content p:last-child {
+    margin-bottom: 0;
+}
+
+.note-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85em;
+    color: #6c757d;
+    margin-top: auto;
+    gap: 10px;
+}
+
+.note-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.note-info div {
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.note-info div:last-child {
+    margin-bottom: 0;
+}
+
+.note-actions {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.note-actions form {
+    display: inline;
+    margin: 0;
+}
+
+.note-actions .btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.8em;
+    min-width: 36px;
+    min-height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* Modal */
+.modal-improved .modal-dialog {
+    max-width: 500px;
+    margin: auto;
+}
+
+.modal-improved .modal-content {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: none;
+}
+
+.modal-improved .modal-header {
+    background-color: #f8f9fa;
+    color: #495057;
+    border-radius: 12px 12px 0 0;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.5rem;
+}
+
+.modal-improved .modal-title {
+    font-weight: 600;
+    font-size: 1.3rem;
+    color: #495057;
+}
+
+.modal-improved .modal-body {
+    padding: 2rem;
+    background-color: #f8f9fa;
+}
+
+.modal-improved .modal-footer {
+    border-top: 1px solid #dee2e6;
+    padding: 1.5rem;
+    background-color: white;
+    border-radius: 0 0 12px 12px;
+}
+
+.modal-section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e9ecef;
+}
+
+.modal-section h6 {
+    color: #495057;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    font-size: 1rem;
+}
+
+.modal-xl {
+    min-width: 60%;
+}
+
+.comprovante-container {
+    text-align: center;
+    padding: 1rem;
+    background: white;
+    border-radius: 8px;
+    border: 2px dashed #dee2e6;
+}
+
+.comprovante-container img {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.comprovante-imagem {
+    max-width: 100%;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    border: 1px solid #dee2e6;
+}
+
+/* ===== UTILITÁRIOS ===== */
+
+.mb-4 {
+    margin-bottom: 0.5rem !important;
+}
+
+.h-100 {
+    height: 100% !important;
+}
+
+.flex-grow-1 {
+    flex-grow: 1 !important;
+}
+
+.mobile-only {
+    display: none;
+}
+
+.desktop-only {
+    display: block;
+}
+
+.form-text {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+.form-control-lg {
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+}
+
+.note-content strong {
+    font-weight: bold;
+    color: #333;
+}
+
+.note-content em {
+    font-style: italic;
+}
+
+.note-content ul,
+.note-content ol {
+    padding-left: 1.2rem;
+    margin-bottom: 0.5rem;
+}
+
+.note-content li {
+    margin-bottom: 0.25rem;
+}
+
+.note-content hr {
+    border: none;
+    border-top: 1px solid #dee2e6;
+    margin: 0.5rem 0;
+}
+
+/* ===== RESPONSIVIDADE ===== */
+
+/* Dispositivos grandes (desktop) */
+@media (min-width: 1200px) {
+
+    .container,
+    .content {
+        max-width: 1140px;
+    }
+}
+
+/* Tablets */
+@media (max-width: 991px) {
+    .sidebar {
+        width: 200px;
+    }
+
+    .main-content,
+    .container2,
+    .notes-container {
+        margin-left: 200px;
+        width: calc(100% - 200px);
+    }
+
+    .linha-index {
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    }
+}
+
+/* Tablets pequenos e mobile */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+        z-index: 1002;
+        padding-top: 60px;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    }
+
+    .main-content,
+    .container2,
+    .notes-container {
+        margin-left: 0;
+        width: 100%;
+        padding: 15px;
+        padding-top: 70px;
+    }
+
+    .mobile-menu-btn {
+        display: block;
+    }
+
+    .container2 {
+        margin-left: 0 !important;
+        width: 100% !important;
+        padding: 15px;
+        padding-top: 70px;
+    }
+
+    .content {
+        width: 100%;
+        padding: 0 10px;
+    }
+
+    .linha {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .linha-index {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .acoes-tarefa {
+        justify-content: center;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .acoes-tarefa .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+
+    .notes-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .notes-toolbar {
+        padding: 15px;
+    }
+
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .projects-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .note-card {
+        min-height: 180px;
+        padding: 15px;
+    }
+
+    .note-footer {
+        flex-direction: row;
+        align-items: center;
+        gap: 8px;
+    }
+
+    .note-actions {
+        justify-content: flex-end;
+    }
+
+    .section-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: flex-start;
+    }
+
+    .form-container {
+        padding: 20px;
+        margin: 10px;
+    }
+
+    .login-container {
+        padding: 10px;
+    }
+
+    .login-box {
+        padding: 1rem;
+    }
+
+    .modal-dialog {
+        margin: 10px;
+    }
+
+    .modal-content {
+        border-radius: 10px;
+    }
+
+    .modal-xl {
+        max-width: 95%;
+        margin: 10px auto;
+    }
+
+    .modal-improved .modal-body .bg-light {
+        border-left: none;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .comprovante-imagem {
+        max-height: 200px;
+    }
+
+    .sidebar a {
+        padding: 15px 20px;
+        font-size: 16px;
+        border-bottom: 1px solid #495057;
+        display: flex;
+        align-items: center;
+    }
+
+    .sidebar a i {
+        margin-right: 12px;
+        width: 20px;
+        text-align: center;
+        font-size: 18px;
+    }
+
+    .user-menu {
+        position: fixed;
+        bottom: 0;
+        width: 280px;
+        z-index: 1004;
+    }
+
+    .user-dropdown {
+        position: fixed;
+        bottom: 70px;
+        left: 0;
+        right: auto;
+        width: 280px;
+        z-index: 1005;
+        background-color: #495057;
+    }
+
+    .mobile-only {
+        display: block;
+    }
+
+    .desktop-only {
+        display: none;
+    }
+
+    .projetos-btn-sm {
+        width: 100%;
+    }
+
+    .form-input,
+    .form-textarea,
+    .form-select {
+        font-size: 16px;
+       
+    }
+}
+
+/* Mobile pequeno */
+@media (max-width: 576px) {
+
+    .container,
+    .main-content,
+    .container2,
+    .notes-container {
+        padding: 10px;
+        padding-top: 70px;
+    }
+
+    .sidebar {
+        width: 100%;
+    }
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .note-footer {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .note-info {
+        width: 100%;
+        order: 1;
+    }
+
+    .note-actions {
+        width: 100%;
+        justify-content: flex-start;
+        order: 2;
+    }
+
+    .project-actions {
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 480px) {
+    .note-footer {
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .note-info {
+        width: 100%;
+        order: 1;
+    }
+
+    .note-actions {
+        width: 100%;
+        justify-content: flex-start;
+        order: 2;
+    }
+}
+
+.bg-roxo {
+    background-color: #9b59b6;
+}
+
+/* ===== MENU DO USUÁRIO NO MOBILE ===== */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        padding-bottom: 20px;
+        height: 100vh;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* MENU DO USUÁRIO  */
+    .user-menu {
+        position: relative;
+        bottom: auto;
+        top: auto;
+        left: auto;
+        width: 100%;
+        margin-top: auto;
+        background-color: #343a40;
+        z-index: 1002;
+        border-top: 1px solid #495057;
+    }
+
+    /* DROPDOWN */
+    .user-dropdown {
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        width: 100%;
+        z-index: 1003;
+        background-color: #495057;
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .content {
+        padding-bottom: 20px;
+    }
+
+    body.menu-open {
+        overflow: hidden;
+        height: 100vh;
+    }
+
+    .sidebar.mobile-open {
+        transform: translateX(0);
+        box-shadow: 2px 0 15px rgba(0, 0, 0, 0.3);
+    }
+}
+
+/* Para telas muito pequenas, ajustes adicionais */
+@media (max-width: 480px) {
+    .sidebar {
+        padding-bottom: 15px;
+    }
+
+    .user-info {
+        padding: 10px 15px;
+    }
+}
+
+/* ===== CORREÇÕES PARA SIDEBAR MOBILE E BOTÕES DE NAVEGAÇÃO ===== */
+
+@media (max-width: 768px) {
+
+    .sidebar {
+        height: 100vh;
+        height: 100dvh;
+        padding-top: env(safe-area-inset-top, 60px);
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+        padding-left: env(safe-area-inset-left, 0);
+        padding-right: env(safe-area-inset-right, 0);
+    }
+
+    .user-menu {
+        position: sticky;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: #343a40;
+        border-top: 1px solid #495057;
+        margin-top: auto;
+        padding-bottom: env(safe-area-inset-bottom, 0);
+    }
+
+    .content {
+        padding-bottom: env(safe-area-inset-bottom, 20px);
+    }
+
+    .mobile-menu-btn {
+        top: env(safe-area-inset-top, 15px);
+        left: env(safe-area-inset-left, 15px);
+    }
+
+    .sidebar-overlay {
+        top: env(safe-area-inset-top, 0);
+        left: env(safe-area-inset-left, 0);
+        right: env(safe-area-inset-right, 0);
+        bottom: env(safe-area-inset-bottom, 0);
+    }
+}
+
+@supports not (height: 100dvh) {
+    @media (max-width: 768px) {
+        .sidebar {
+            height: calc(100vh - 60px);
         }
     }
 }
-?>
-<!DOCTYPE html>
-<html lang="pt-BR">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro - Sistema de Projetos</title>
-    <link rel="stylesheet" href="stile.css">
-</head>
+@media (max-width: 768px) and (orientation: portrait) {
+    .sidebar {
+        padding-top: max(env(safe-area-inset-top), 60px);
+    }
+}
 
-<body>
-    <div class="login-container">
-        <div class="login-box">
-            <div class="cabecalho-login">
-                <div class="logo-login">Intuitus</div>
-            </div>
-            <h1 class="cabecalho-login">Cadastro de Usuário</h1>
+@media (max-width: 768px) and (orientation: landscape) {
+    .sidebar {
+        padding-top: max(env(safe-area-inset-top), 40px);
+    }
 
-            <?php if ($erro): ?>
-                <div class="alert alert-error"><?php echo $erro; ?></div>
-            <?php endif; ?>
+    .user-menu {
+        position: relative;
+    }
+}
 
-            <?php if ($sucesso): ?>
-                <div class="alert alert-success">
-                    <meta http-equiv="refresh" content="2; login.php"><?php echo $sucesso; ?>
-                </div>
-            <?php endif; ?>
+.sidebar {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+}
 
-            <!-- Input nome -->
-            <form method="POST">
-                <div class="form-group">
-                    <label class="form-label">Nome Completo:</label>
-                    <input type="text" name="nome" class="form-input" placeholder="Digite seu Nome" required
-                        value="<?php echo isset($_POST['nome']) ? htmlspecialchars($_POST['nome']) : ''; ?>">
-                </div>
+/* Ajuste fino para o menu do usuário no mobile */
+@media (max-width: 768px) {
+    .user-info {
+        min-height: 60px;
+    }
 
-                <!-- Input email -->
-                <div class="form-group">
-                    <label class="form-label">Email:</label>
-                    <input type="email" name="email" class="form-input" placeholder="Digite seu email" required
-                        value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
-                </div>
+    .user-dropdown a {
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+    }
+}
 
-                <!-- Input senha -->
-                <div class="form-group">
-                    <label class="form-label">Senha:</label>
-                    <input type="password" name="senha" class="form-input" placeholder="Digite sua senha" required
-                        onfocus="document.getElementById('senha-info').style.display='block'"
-                        onblur="document.getElementById('senha-info').style.display='none'">
-                    <div id="senha-info" class="senha-info" style="display: none;">
-                        (A senha deve conter pelo menos 6 caracteres, 1 letra maiúscula e 1 caractere especial)
-                    </div>
-                </div>
+@media (max-width: 768px) {
 
-                <!-- Input confirmar senha -->
-                <div class="form-group">
-                    <label class="form-label">Confirmar Senha:</label>
-                    <input type="password" name="confirmar_senha" class="form-input" placeholder="Confirme sua senha"
-                        required>
-                </div>
-
-                <!-- Botão de cadastro -->
-                <button type="submit" class="btn-login">
-                    Cadastrar
-                </button>
-            </form>
-
-            <!-- Link para login.php -->
-            <div class="label-cadastro">
-                Já tem uma conta? <a href="login.php" class="texto-cadastro">Faça Login Aqui</a>
-            </div>
-
-            <div class="rodape-login">
-                <p>Sistema de Gestão de Tarefas para Equipes de Trabalho</p>
-                <p>© 2025 - TCC Ensino Médio</p>
-            </div>
-        </div>
-    </div>
-</body>
-
-</html>
+    .sidebar input,
+    .sidebar select,
+    .sidebar textarea {
+        font-size: 16px;
+    }
+}
