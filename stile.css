@@ -811,6 +811,14 @@ body.menu-open {
     }
 }
 
+/* Registro */
+.senha-info {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+    font-style: italic;
+}
+
 /* Notas */
 .notes-grid {
     display: grid;
