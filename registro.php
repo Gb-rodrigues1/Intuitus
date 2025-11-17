@@ -99,7 +99,7 @@ if ($_POST) {
                 <div class="form-group">
                     <label class="form-label">Senha:</label>
                     <input type="password" name="senha" id="campoSenha" class="form-input" placeholder="Digite sua senha" required>
-                    <div id="senha-info" class="senha-info" style="opacity: 0.5;">
+                    <div id="senha-info" class="senha-info">
                         (A senha deve conter pelo menos 6 caracteres, 1 letra maiúscula e 1 caractere especial)
                     </div>
                 </div>
@@ -129,14 +129,26 @@ if ($_POST) {
         </div>
     </div>
     <script>
-    // Adiciona os eventos de foco e blur ao campo de senha
-    document.getElementById('campoSenha').addEventListener('focus', function() {
-        document.getElementById('senha-info').style.opacity = '1';
-    });
-
-    document.getElementById('campoSenha').addEventListener('blur', function() {
-        document.getElementById('senha-info').style.opacity = '0.5';
-    });
-</script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const campoSenha = document.getElementById('campoSenha');
+            const senhaInfo = document.getElementById('senha-info');
+            
+            if (campoSenha && senhaInfo) {
+                // Inicialmente esconde a mensagem
+                senhaInfo.style.display = 'none';
+                
+                campoSenha.addEventListener('focus', function() {
+                    senhaInfo.style.display = 'block';
+                });
+                
+                campoSenha.addEventListener('blur', function() {
+                    // Só esconde se o campo estiver vazio
+                    if (this.value === '') {
+                        senhaInfo.style.display = 'none';
+                    }
+                });
+            }
+        });
+    </script>
 </body>
 </html>
