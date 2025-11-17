@@ -130,7 +130,7 @@ if ($usuario && isset($usuario['nome'])) {
                   <h3 class="section-title">Nossa Equipe</h3>
                   <div class="row g-4">
                       <!-- Roger -->
-                      <div class="col-md-6">
+                      <div class="col-md-4">
                           <div class="team-member-card">
                               <div class="member-icon icon-design">
                                   <i class="fas fa-paint-brush"></i>
@@ -144,7 +144,7 @@ if ($usuario && isset($usuario['nome'])) {
                       </div>
 
                       <!-- Vinicius -->
-                      <div class="col-md-6">
+                      <div class="col-md-4">
                           <div class="team-member-card">
                               <div class="member-icon icon-banco-dados">
                                   <i class="fas fa-paint-brush"></i>
