@@ -130,26 +130,26 @@ if ($usuario && isset($usuario['nome'])) {
                   <h3 class="section-title">Nossa Equipe</h3>
                   <div class="row g-4">
                       <!-- Roger -->
-                      <div class="col-md-4">
+                      <div class="col-md-6">
                           <div class="team-member-card">
-                              <div class="member-icon icon-documentacao">
-                                  <i class="fas fa-file-alt"></i>
+                              <div class="member-icon icon-design">
+                                  <i class="fas fa-paint-brush"></i>
                               </div>
                               <h5 class="team-member-name">Roger Carvalho</h5>
-                              <p class="member-role">Especialista em Documentação</p>
+                              <p class="member-role">Designer de Interface</p>
                               <p class="member-bio">
-                                  Responsável pela documentação técnica e arquitetura da informação do sistema.
+                                  Cria experiências visuais intuitivas e interfaces responsivas para os usuários.
                               </p>
                           </div>
                       </div>
 
-                      <!-- Guilherme -->
-                      <div class="col-md-4">
+                      <!-- Vinicius -->
+                      <div class="col-md-6">
                           <div class="team-member-card">
                               <div class="member-icon icon-banco-dados">
-                                  <i class="fas fa-database"></i>
+                                  <i class="fas fa-paint-brush"></i>
                               </div>
-                              <h5 class="team-member-name">Guilherme Dias</h5>
+                              <h5 class="team-member-name">Vinicius Santos</h5>
                               <p class="member-role">Arquiteto de Banco de Dados</p>
                               <p class="member-bio">
                                   Projeta e otimiza a estrutura de dados para performance e escalabilidade.
@@ -160,13 +160,13 @@ if ($usuario && isset($usuario['nome'])) {
                       <!-- Miguel -->
                       <div class="col-md-4">
                           <div class="team-member-card">
-                              <div class="member-icon icon-analise">
+                              <div class="member-icon icon-documentacao">
                                   <i class="fas fa-chart-line"></i>
                               </div>
                               <h5 class="team-member-name">Miguel Felipe</h5>
-                              <p class="member-role">Analista de Documentação</p>
+                              <p class="member-role">Especialista em Documentação</p>
                               <p class="member-bio">
-                                  Desenvolve a documentação de usuário e mantém a consistência técnica.
+                                  Responsável pela documentação técnica e arquitetura da informação do sistema.
                               </p>
                           </div>
                       </div>
@@ -185,16 +185,16 @@ if ($usuario && isset($usuario['nome'])) {
                           </div>
                       </div>
 
-                      <!-- Vinicius -->
+                      <!-- Guilherme -->
                       <div class="col-md-6">
                           <div class="team-member-card">
-                              <div class="member-icon icon-design">
-                                  <i class="fas fa-paint-brush"></i>
+                              <div class="member-icon icon-fullstack">
+                                  <i class="fas fa-code"></i>
                               </div>
-                              <h5 class="team-member-name">Vinicius Santos</h5>
-                              <p class="member-role">Designer de Interface</p>
+                              <h5 class="team-member-name">Guilherme Dias</h5>
+                              <p class="member-role">Desenvolvedor Full-Stack</p>
                               <p class="member-bio">
-                                  Cria experiências visuais intuitivas e interfaces responsivas para os usuários.
+                                  Implementa funcionalidades tanto no backend quanto no frontend do sistema.
                               </p>
                           </div>
                       </div>
