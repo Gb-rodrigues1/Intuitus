@@ -147,7 +147,7 @@ if ($usuario && isset($usuario['nome'])) {
                       <div class="col-md-4">
                           <div class="team-member-card">
                               <div class="member-icon icon-banco-dados">
-                                  <i class="fas fa-paint-brush"></i>
+                                  <i class="fas fa-database"></i>
                               </div>
                               <h5 class="team-member-name">Vinicius Santos</h5>
                               <p class="member-role">Arquiteto de Banco de Dados</p>
@@ -161,7 +161,7 @@ if ($usuario && isset($usuario['nome'])) {
                       <div class="col-md-4">
                           <div class="team-member-card">
                               <div class="member-icon icon-documentacao">
-                                  <i class="fas fa-chart-line"></i>
+                                  <i class="fas fa-file-alt"></i>
                               </div>
                               <h5 class="team-member-name">Miguel Felipe</h5>
                               <p class="member-role">Especialista em Documentação</p>
